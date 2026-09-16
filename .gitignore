@@ -1,0 +1,12 @@
+.DS_Store
+local.mk
+__pycache__/
+*.pyc
+
+# Local artifacts and safe configuration examples
+.env
+.env.*
+!.env.example
+/archives/
+/backups/
+docs-wip/

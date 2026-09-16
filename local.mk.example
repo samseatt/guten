@@ -1,0 +1,4 @@
+# Optional machine-local settings. Copy to local.mk (ignored by Git).
+# Activate your Guten Python environment, or specify its interpreter explicitly.
+# DATALAKE_PYTHON := /absolute/path/to/guten-python/bin/python
+# GUTEN_ROOT := /absolute/path/to/parent-containing-the-four-service-repositories
