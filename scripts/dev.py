@@ -11,6 +11,7 @@ import time
 ROOT = Path(os.environ.get("GUTEN_ROOT") or Path(__file__).resolve().parents[2])
 PORTS = {"datalake": 8005, "crust": 8000, "portal": 3001, "sites": 3000}
 HELP = """Guten local operations (run make from this repository)
+  make docker-status                Show separate local Compose projects (see docs/docker.md)
   make status                       Check listeners; does not claim API health
   make up                           Run all four services; Ctrl+C stops this run
   make run SERVICE=portal           Run one service; Ctrl+C stops this run

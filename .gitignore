@@ -15,3 +15,5 @@ node_modules/
 /artifacts/
 /test-results/
 /playwright-report/
+
+/.docker-local/

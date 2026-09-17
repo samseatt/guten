@@ -1,7 +1,9 @@
 import { defineConfig } from '@playwright/test';
 import path from 'node:path';
 
-if (process.env.GUTEN_ACCEPTANCE_RUN !== '1' || !/^guten_acceptance_test_[a-f0-9]+$/.test(process.env.TEST_DATABASE || '')) {
+const nativeRun = process.env.GUTEN_ACCEPTANCE_RUN === '1' && /^guten_acceptance_test_[a-f0-9]+$/.test(process.env.TEST_DATABASE || '');
+const composeRun = process.env.GUTEN_ACCEPTANCE_RUN === 'compose' && process.env.TEST_DATABASE === 'guten_compose_test_local';
+if (!nativeRun && !composeRun) {
   throw new Error('Run make acceptance: browser tests must use its disposable database and servers.');
 }
 for (const key of ['GUTEN_PORTAL_URL', 'GUTEN_SITES_URL', 'GUTEN_API_URL']) {

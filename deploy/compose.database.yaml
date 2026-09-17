@@ -1,0 +1,33 @@
+name: guten-db
+services:
+  postgres:
+    image: postgres:14-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets: [postgres_password]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [database]
+    # No host port: this local rehearsal is reachable only through its Docker network.
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+    stop_grace_period: 60s
+volumes:
+  pgdata:
+    external: true
+    name: guten-local-pgdata
+networks:
+  database:
+    name: guten-local-database
+secrets:
+  postgres_password:
+    file: ../.docker-local/postgres_password

@@ -1,0 +1,8 @@
+# Optional NON-SECRET settings for compose.apps.yaml (export these in your shell).
+# Local Make commands work with defaults; no copy is needed.
+GUTEN_IMAGE_TAG=local
+GUTEN_PUBLIC_SITES_URL=http://localhost:13000
+GUTEN_BROWSER_ORIGINS=http://localhost:13000,http://localhost:13001
+# Absolute paths are recommended when overriding these.
+# GUTEN_ASSETS_DIR=/absolute/path/to/read-only/assets
+# GUTEN_DATABASE_URL_FILE=/absolute/path/to/private/database_url

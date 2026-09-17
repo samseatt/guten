@@ -61,7 +61,7 @@ These delegate to versioned backup/restore scripts in guten-datalake. Read that 
 5. Review Git diffs in each affected repository; commit/push deliberately.
 6. Verify the local content flow before any deployment.
 
-Docker/container commands and AWS deployment are future additions after application build and configuration issues are resolved. This first version keeps the existing native services usable. It does not include placeholder deployments, change database topology, install Docker, push Git, or provision AWS. The command interface can later dispatch container builds/Compose and deployment tooling without replacing database archive scripts.
+Docker Compose packaging is now available alongside the native launcher. See [Docker setup and operations](docs/docker.md). AWS provisioning, authentication and deployment automation remain later work; native master backups are unchanged.
 
 See [storage and Git conventions](docs/storage-and-git.md) for media archives, commit boundaries, and the proposed S3 path design.
 
@@ -78,4 +78,4 @@ make acceptance
 
 This creates an empty disposable test database from committed schema/migrations, runs API and headless browser tests on isolated ports, then removes only that database and the processes it started. It does not require a content dump or stop development services. Logs, API results, browser HTML/JUnit reports, and failure traces remain under ignored `artifacts/`. See [testing and prerequisites](docs/testing.md), including browser setup for this Mac and Linux.
 
-Environment examples are committed in each application repo. Datalake requires `DATABASE_URL`; both frontends share `NEXT_PUBLIC_API_BASE_URL`. Public frontend settings must contain no secrets. Authentication, container packaging and cloud deployment remain subsequent work.
+Environment examples are committed in each application repo. Datalake requires `DATABASE_URL`; both frontends share `NEXT_PUBLIC_API_BASE_URL`. Public frontend settings must contain no secrets. Authentication and cloud deployment remain subsequent work; [container packaging](docs/docker.md) runs locally on alternate ports.

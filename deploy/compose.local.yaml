@@ -1,0 +1,18 @@
+# Local rehearsal only: connect applications to the independently managed DB stack.
+services:
+  datalake:
+    networks: [default, database]
+  db-init:
+    profiles: [tools]
+    image: guten-datalake:${GUTEN_IMAGE_TAG:-local}
+    command: [python, scripts/database/init_container_test.py]
+    networks: [database]
+    secrets: [database_url, postgres_password]
+    restart: "no"
+networks:
+  database:
+    external: true
+    name: guten-local-database
+secrets:
+  postgres_password:
+    file: ../.docker-local/postgres_password

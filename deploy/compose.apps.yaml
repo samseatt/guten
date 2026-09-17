@@ -1,0 +1,85 @@
+name: guten-apps
+x-runtime: &runtime
+  restart: unless-stopped
+  init: true
+  security_opt: ["no-new-privileges:true"]
+  cap_drop: [ALL]
+  logging:
+    driver: json-file
+    options: {max-size: "10m", max-file: "3"}
+services:
+  datalake:
+    <<: *runtime
+    image: guten-datalake:${GUTEN_IMAGE_TAG:-local}
+    build: ../../guten-datalake
+    environment:
+      DATABASE_URL_FILE: /run/secrets/database_url
+      LOG_LEVEL: INFO
+      SQL_ECHO: "false"
+    secrets: [database_url]
+  crust:
+    <<: *runtime
+    image: guten-crust:${GUTEN_IMAGE_TAG:-local}
+    build: ../../guten-crust
+    environment:
+      PORT: "8000"
+      GUTEN_DATALAKE_URL: http://datalake:8005
+      CORS_ORIGINS: ${GUTEN_BROWSER_ORIGINS:-http://localhost:13000,http://localhost:13001}
+    depends_on:
+      datalake: {condition: service_healthy}
+  portal:
+    <<: *runtime
+    image: guten-portal:${GUTEN_IMAGE_TAG:-local}
+    build:
+      context: ../../guten-portal
+      args:
+        NEXT_PUBLIC_API_BASE_URL: /api
+        NEXT_PUBLIC_GUTEN_SITES_URL: ${GUTEN_PUBLIC_SITES_URL:-http://localhost:13000}
+    volumes:
+      - type: bind
+        source: ${GUTEN_ASSETS_DIR:-../../guten-sites/public/assets}
+        target: /app/public/assets
+        read_only: true
+        bind: {create_host_path: false}
+    depends_on:
+      crust: {condition: service_healthy}
+  sites:
+    <<: *runtime
+    image: guten-sites:${GUTEN_IMAGE_TAG:-local}
+    build:
+      context: ../../guten-sites
+      args: {NEXT_PUBLIC_API_BASE_URL: /api}
+    volumes:
+      - type: bind
+        source: ${GUTEN_ASSETS_DIR:-../../guten-sites/public/assets}
+        target: /app/public/assets
+        read_only: true
+        bind: {create_host_path: false}
+    depends_on:
+      crust: {condition: service_healthy}
+  web:
+    <<: *runtime
+    image: nginx:stable-alpine
+    # Nginx starts unprivileged and uses only high ports and temporary runtime files.
+    user: "101:101"
+    read_only: true
+    tmpfs: [/tmp]
+    entrypoint: [nginx, "-g", "daemon off;"]
+    ports: ["127.0.0.1:13000:8080", "127.0.0.1:13001:8081"]
+    volumes:
+      - type: bind
+        source: ./nginx.conf
+        target: /etc/nginx/nginx.conf
+        read_only: true
+        bind: {create_host_path: false}
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, http://127.0.0.1:8080/health]
+      interval: 15s
+      timeout: 5s
+      retries: 4
+    depends_on:
+      portal: {condition: service_healthy}
+      sites: {condition: service_healthy}
+secrets:
+  database_url:
+    file: ${GUTEN_DATABASE_URL_FILE:-../.docker-local/database_url}
