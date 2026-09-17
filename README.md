@@ -79,3 +79,5 @@ make acceptance
 This creates an empty disposable test database from committed schema/migrations, runs API and headless browser tests on isolated ports, then removes only that database and the processes it started. It does not require a content dump or stop development services. Logs, API results, browser HTML/JUnit reports, and failure traces remain under ignored `artifacts/`. See [testing and prerequisites](docs/testing.md), including browser setup for this Mac and Linux.
 
 Environment examples are committed in each application repo. Datalake requires `DATABASE_URL`; both frontends share `NEXT_PUBLIC_API_BASE_URL`. Public frontend settings must contain no secrets. Authentication and cloud deployment remain subsequent work; [container packaging](docs/docker.md) runs locally on alternate ports.
+
+See [root pages and domain routing](docs/domain-routing.md) for the Portal home and recommended production addresses.
