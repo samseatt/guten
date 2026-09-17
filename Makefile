@@ -9,3 +9,11 @@ DOCKER_TASKS := docker-setup docker-db-up docker-db-stop docker-build docker-ini
 .PHONY: $(DOCKER_TASKS)
 $(DOCKER_TASKS):
 	@python3 -B scripts/compose.py $@
+
+.PHONY: auth-setup
+auth-setup:
+	@python3 -B scripts/setup_auth.py
+
+.PHONY: security-check
+security-check:
+	@SECURITY_PYTHON="$(SECURITY_PYTHON)" python3 -B scripts/security_check.py

@@ -8,6 +8,13 @@ x-runtime: &runtime
     driver: json-file
     options: {max-size: "10m", max-file: "3"}
 services:
+  auth:
+    <<: *runtime
+    image: quay.io/oauth2-proxy/oauth2-proxy:v7.15.4@sha256:b1b2021fe8f4004573e8d690dec6c7bb29cc44364572cf8510a05bf3a0ae2ded
+    user: "65532:65532"
+    read_only: true
+    command: ["--config=/run/secrets/oauth_config"]
+    secrets: [oauth_config, github_client_secret, oauth_cookie_secret]
   datalake:
     <<: *runtime
     image: guten-datalake:${GUTEN_IMAGE_TAG:-local}
@@ -35,6 +42,7 @@ services:
       args:
         NEXT_PUBLIC_API_BASE_URL: /api
         NEXT_PUBLIC_GUTEN_SITES_URL: ${GUTEN_PUBLIC_SITES_URL:-http://localhost:13000}
+        NEXT_PUBLIC_AUTH_ENABLED: "true"
     volumes:
       - type: bind
         source: ${GUTEN_ASSETS_DIR:-../../guten-sites/public/assets}
@@ -78,8 +86,15 @@ services:
       timeout: 5s
       retries: 4
     depends_on:
+      auth: {condition: service_started}
       portal: {condition: service_healthy}
       sites: {condition: service_healthy}
 secrets:
   database_url:
     file: ${GUTEN_DATABASE_URL_FILE:-../.docker-local/database_url}
+  oauth_config:
+    file: ${GUTEN_OAUTH_CONFIG_FILE:-../.docker-local/oauth2-proxy.cfg}
+  github_client_secret:
+    file: ${GUTEN_GITHUB_SECRET_FILE:-../.docker-local/github_client_secret}
+  oauth_cookie_secret:
+    file: ${GUTEN_COOKIE_SECRET_FILE:-../.docker-local/oauth_cookie_secret}

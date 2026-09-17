@@ -1,5 +1,11 @@
 # Local rehearsal only: connect applications to the independently managed DB stack.
 services:
+  auth:
+    environment:
+      # HTTP is restricted to loopback for local development; base defaults require HTTPS.
+      OAUTH2_PROXY_WHITELIST_DOMAINS: "localhost:13001"
+      OAUTH2_PROXY_COOKIE_SECURE: "false"
+      OAUTH2_PROXY_REDIRECT_URL: http://localhost:13001/oauth2/callback
   datalake:
     networks: [default, database]
   db-init:

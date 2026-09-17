@@ -20,5 +20,5 @@ export default defineConfig({
   reporter: [['list'], ['html', { outputFolder: path.join(artifacts, 'browser-report'), open: 'never' }],
              ['junit', { outputFile: path.join(artifacts, 'browser-results.xml') }]],
   use: { browserName: 'chromium', channel: process.env.PLAYWRIGHT_CHANNEL || undefined,
-         baseURL: process.env.GUTEN_PORTAL_URL, headless: true, trace: 'retain-on-failure', screenshot: 'only-on-failure' },
+         baseURL: process.env.GUTEN_PORTAL_URL, storageState: process.env.GUTEN_AUTH_STATE || undefined, headless: true, trace: 'retain-on-failure', screenshot: 'only-on-failure' },
 });

@@ -1,0 +1,32 @@
+# Copy with make auth-setup; edit client_id in the ignored local copy.
+provider = "github"
+client_id = "REPLACE_GITHUB_CLIENT_ID"
+client_secret_file = "/run/secrets/github_client_secret"
+cookie_secret_file = "/run/secrets/oauth_cookie_secret"
+http_address = "0.0.0.0:4180"
+redirect_url = "https://portal.guten.ink/oauth2/callback"
+upstreams = ["http://web:8082/"]
+reverse_proxy = true
+email_domains = ["*"]
+github_users = ["samseatt"]
+scope = "user:email read:org"
+api_routes = ["^/api/"]
+cookie_name = "_guten_portal"
+cookie_secure = true
+cookie_httponly = true
+cookie_samesite = "lax"
+cookie_expire = "1h"
+cookie_refresh = "15m"
+cookie_csrf_per_request = true
+cookie_csrf_expire = "5m"
+pass_access_token = false
+pass_authorization_header = false
+pass_basic_auth = false
+pass_user_headers = false
+skip_auth_strip_headers = true
+skip_provider_button = false
+request_logging = false
+silence_ping_logging = true
+banner = "Sign in to Guten Portal with an approved GitHub account."
+
+whitelist_domains = ["portal.guten.ink"]

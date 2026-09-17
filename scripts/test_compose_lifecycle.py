@@ -1,13 +1,11 @@
 """Check isolation, shared read-only assets, and persistence across container replacement."""
 import hashlib
 import json
-import os
 from pathlib import Path
 import subprocess
 import time
 import uuid
 from urllib.parse import quote
-from urllib.request import Request, urlopen
 from compose import APPS, DB, ROOT
 
 subprocess.run(APPS + ["exec", "-T", "datalake", "python", "-c",
@@ -21,10 +19,14 @@ def inspect(service):
     return json.loads(subprocess.check_output(["docker", "inspect", ident], text=True))[0]
 
 def call(method, path, body=None):
-    with urlopen(Request("http://127.0.0.1:13001/api/guten"+path, method=method,
-                         data=None if body is None else json.dumps(body).encode(),
-                         headers={"Content-Type":"application/json"}), timeout=15) as response:
-        return json.load(response)
+    # Internal container request: lifecycle fixture setup is separate from OAuth coverage.
+    code = """import json,sys
+from urllib.request import Request,urlopen
+method,path,body=sys.argv[1:]
+with urlopen(Request('http://127.0.0.1:8005/guten'+path,method=method,data=None if body=='null' else body.encode(),headers={'Content-Type':'application/json'}),timeout=15) as response:
+ print(response.read().decode())
+"""
+    return json.loads(subprocess.check_output(APPS + ["exec", "-T", "datalake", "python", "-c", code, method, path, json.dumps(body)], text=True))
 
 name = "persistence_" + uuid.uuid4().hex
 created = False
@@ -36,15 +38,21 @@ try:
         if service != "web":
             assert not inspect(service)["HostConfig"]["PortBindings"], service
             subprocess.run(APPS + ["exec", "-T", service, "sh", "-c", "test ! -f /app/.env"], check=True)
+    auth = inspect("auth")
+    assert auth["Config"]["User"] == "65532:65532"
+    assert auth["HostConfig"]["ReadonlyRootfs"] and not auth["HostConfig"]["PortBindings"]
+    report["non_root_services"].append("auth")
     mounts = [next(m for m in inspect(service)["Mounts"] if m["Destination"] == "/app/public/assets") for service in ("portal","sites")]
     assert mounts[0]["Source"] == mounts[1]["Source"] and all(not m["RW"] for m in mounts)
     assets = Path(mounts[0]["Source"])
     sample = next(assets.rglob("*.png"), None)
     if sample:
         expected = hashlib.sha256(sample.read_bytes()).hexdigest()
-        for port in (13000,13001):
-            with urlopen(f"http://127.0.0.1:{port}/assets/"+quote(sample.relative_to(assets).as_posix()), timeout=15) as response:
-                assert hashlib.sha256(response.read()).hexdigest() == expected
+        for service in ("sites", "portal"):
+            url = "http://127.0.0.1:3000/assets/"+quote(sample.relative_to(assets).as_posix())
+            code = "fetch(process.argv[1]).then(async r=>{if(!r.ok)process.exit(1);console.log(require('crypto').createHash('sha256').update(Buffer.from(await r.arrayBuffer())).digest('hex'))})"
+            actual = subprocess.check_output(APPS+["exec","-T",service,"node","-e",code,url],text=True).strip()
+            assert actual == expected
         report["assets_verified"] = True
     else:
         report["assets_note"] = "No PNG available; mount permissions and shared path verified."

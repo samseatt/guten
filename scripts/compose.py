@@ -41,7 +41,12 @@ def main():
     elif action == "docker-db-stop": run(DB + ["stop"])
     elif action == "docker-build": run(APPS + ["build", "--pull"])
     elif action == "docker-init-test": run(APPS + ["run", "--rm", "--no-deps", "db-init"])
-    elif action == "docker-up": run(APPS + ["up", "-d", "--wait", "--wait-timeout", "180"])
+    elif action == "docker-up":
+        run(APPS + ["run", "--rm", "--no-deps", "auth", "--config=/run/secrets/oauth_config", "--config-test"])
+        run(APPS + ["up", "-d", "--wait", "--wait-timeout", "180"])
+        # Bind-mounted configuration changes do not change Compose's service hash.
+        # Recreate the gateway services so new credentials and routing are loaded.
+        run(APPS + ["up", "-d", "--no-deps", "--force-recreate", "--wait", "--wait-timeout", "180", "auth", "web"])
     elif action == "docker-stop": run(APPS + ["stop"])
     elif action == "docker-down": run(APPS + ["down"])
     elif action == "docker-status":

@@ -6,3 +6,6 @@ GUTEN_BROWSER_ORIGINS=http://localhost:13000,http://localhost:13001
 # Absolute paths are recommended when overriding these.
 # GUTEN_ASSETS_DIR=/absolute/path/to/read-only/assets
 # GUTEN_DATABASE_URL_FILE=/absolute/path/to/private/database_url
+# GUTEN_OAUTH_CONFIG_FILE=/absolute/path/to/private/oauth2-proxy.cfg
+# GUTEN_GITHUB_SECRET_FILE=/absolute/path/to/private/github_client_secret
+# GUTEN_COOKIE_SECRET_FILE=/absolute/path/to/private/oauth_cookie_secret

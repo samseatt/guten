@@ -5,7 +5,7 @@ const api = process.env.GUTEN_API_URL!;
 const sites = process.env.GUTEN_SITES_URL!;
 let name: string;
 async function call(request: APIRequestContext, method: string, path: string, data?: unknown) {
-  const response = await request.fetch(api + path, { method, data });
+  const response = await request.fetch(api + path, { method, data, headers: { Origin: process.env.GUTEN_PORTAL_URL! } });
   expect(response.ok(), `${method} ${path}: ${await response.text()}`).toBeTruthy();
   return response.json();
 }

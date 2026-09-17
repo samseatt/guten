@@ -11,6 +11,8 @@ import time
 ROOT = Path(os.environ.get("GUTEN_ROOT") or Path(__file__).resolve().parents[2])
 PORTS = {"datalake": 8005, "crust": 8000, "portal": 3001, "sites": 3000}
 HELP = """Guten local operations (run make from this repository)
+  make auth-setup                   Prepare private GitHub OAuth files (see docs/authentication.md)
+  make security-check               Audit locked dependencies (see docs/security-maintenance.md)
   make docker-status                Show separate local Compose projects (see docs/docker.md)
   make status                       Check listeners; does not claim API health
   make up                           Run all four services; Ctrl+C stops this run
@@ -65,7 +67,7 @@ def command(service):
                 "--host", "127.0.0.1", "--port", str(PORTS[service]), "--reload"]
     if service == "crust":
         return [str(directory / "node_modules/.bin/ts-node"), "src/server.ts"]
-    return ["npm", "run", "dev", "--", "-p", str(PORTS[service])]
+    return ["npm", "run", "dev", "--", "-p", str(PORTS[service]), "--hostname", "127.0.0.1"]
 
 
 def preflight(services):

@@ -17,3 +17,5 @@ node_modules/
 /playwright-report/
 
 /.docker-local/
+
+/.venv-security/

@@ -51,4 +51,4 @@ make check
 make build
 ```
 
-Checks validate Python syntax and application TypeScript. Builds validate production compilation; stop the ordinary application services first to avoid overwriting their build output. These complement acceptance tests, which currently exercise development-mode Next.js servers. There is no claim of full security, performance, migration-from-every-historical-version, or production-container coverage. Add deployment/authentication tests with those features.
+Checks validate Python syntax and application TypeScript. Builds validate production compilation; stop the ordinary application services first to avoid overwriting their build output. These complement acceptance tests, which currently exercise development-mode Next.js servers. Docker production-container and authentication tests are available through `make docker-test`; see [authentication](authentication.md) and [Docker operations](docker.md). There is no claim of full security, performance, or migration-from-every-historical-version coverage.

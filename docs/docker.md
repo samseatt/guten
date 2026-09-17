@@ -6,7 +6,7 @@ This is a local production-build rehearsal, not a public cloud deployment. It ru
 
 - Each application repository owns its Dockerfile and .dockerignore. Python uses 3.11, Node uses 22; npm ci and the committed Python requirements preserve application dependency versions.
 - Frontends use Next.js standalone production output. Crust compiles TypeScript and removes development dependencies. All four application processes run as non-root users.
-- `deploy/compose.apps.yaml` owns the four applications and an unprivileged Nginx proxy. Only the proxy publishes ports, bound explicitly to 127.0.0.1.
+- `deploy/compose.apps.yaml` owns the four applications, OAuth2 Proxy and an unprivileged Nginx proxy. Only the proxy publishes ports, bound explicitly to 127.0.0.1.
 - `deploy/compose.database.yaml` owns PostgreSQL with an external named volume. No database port is published locally.
 - `deploy/compose.local.yaml` joins Datalake to the separate local database network and provides an explicit, one-time rehearsal initializer. Do not use this overlay on separate cloud hosts.
 
@@ -14,10 +14,11 @@ The database image retains PostgreSQL major 14 for compatibility with the curren
 
 ## First setup
 
-Run from this repository. Docker Desktop/Engine and Compose v2 with `up --wait` are required; install the existing test dependencies with `npm ci` to run browser tests.
+Run from this repository. Docker Desktop/Engine and Compose v2.24.4+ with `up --wait` and `!override` are required; install the existing test dependencies with `npm ci` to run browser tests.
 
 ```bash
 make docker-setup
+make auth-setup        # configure GitHub credentials; see docs/authentication.md
 make docker-build
 make docker-db-up
 make docker-init-test
@@ -49,21 +50,21 @@ make docker-build      # rebuild production images after source changes
 make docker-up         # recreate changed app containers
 ```
 
-App commands do not stop the database. No provided command removes a database volume. The named volume `guten-local-pgdata` is external even to the database project; Compose down (including -v) does not remove it. Docker volume removal/pruning is a separate, potentially destructive administrator action. Persistence is not a backup.
+`make docker-up` validates the auth configuration and recreates the gateway services to load changed routing or credentials; application containers are recreated only when needed. App commands do not stop the database. No provided command removes a database volume. The named volume `guten-local-pgdata` is external even to the database project; Compose down (including -v) does not remove it. Docker volume removal/pruning is a separate, potentially destructive administrator action. Persistence is not a backup.
 
 The local helper checks the volume's Guten rehearsal label before adopting it. Existing unrelated Docker containers/volumes are not managed. Native `make up`, `make backup`, and `make acceptance` remain available and unchanged in purpose.
 
 ## Routing, media and configuration
 
-Browser API calls use same-origin `/api`, forwarded to Crust, which addresses Datalake through Compose DNS. Container hostnames never appear in browser URLs. The public Sites listener permits only GET/HEAD under `/api/guten/published/` and rejects other API paths/methods. The Portal listener allows editorial routes and is LOCAL ONLY until authentication protects both pages and APIs.
+Browser API calls use same-origin `/api`, forwarded to Crust, which addresses Datalake through Compose DNS. Container hostnames never appear in browser URLs. The public Sites listener permits only GET/HEAD under `/api/guten/published/` and rejects other API paths/methods. The Portal listener protects pages and editorial APIs with GitHub authentication. See [authentication setup](authentication.md).
 
 The existing `guten-sites/public/assets` directory is mounted read-only into both frontends, so `/assets/...` can work in containerized Portal previews as well as Sites. Images are not copied into images, moved, regenerated, or committed. Override `GUTEN_ASSETS_DIR` with an existing absolute directory if needed. Central S3 media delivery remains later work.
 
-`GUTEN_PUBLIC_SITES_URL` is a frontend BUILD argument used by Portal's View Published link; rebuild Portal when it changes. `/api` itself stays portable. See `deploy/environment.example`. A future deployment can use `compose.apps.yaml` alone with a secret pointing to the database host's private address. That is a packaging foundation, not yet a ready-to-expose Lightsail configuration: private firewall rules/TLS, auth, HTTPS domains, image registry/CI, backup scheduling, and dependency security updates still need implementation.
+`GUTEN_PUBLIC_SITES_URL` is a frontend BUILD argument used by Portal's View Published link; rebuild Portal when it changes. `/api` itself stays portable. See `deploy/environment.example`. A future deployment can use `compose.apps.yaml` alone with a secret pointing to the database host's private address. That is a packaging foundation, not yet a ready-to-expose Lightsail configuration: private firewall rules/TLS, HTTPS domains, image registry/CI and backup scheduling still need implementation.
 
 ## Verification and backups
 
-`make docker-test` verifies the running Datalake targets the isolated Compose database, checks public API restrictions and proxy recovery after upstream replacement, and runs the stored browser workflows against the production containers. Reports and container logs go to ignored `artifacts/compose_<run-id>/`. It leaves the stack running and cleans its synthetic site fixtures. `make docker-test-lifecycle` separately verifies non-root processes, hidden backend ports, shared read-only media, and persistence by replacing the rehearsal containers while retaining the volume. It briefly interrupts the Docker rehearsal stack only and retains a JSON report.
+`make docker-test` creates a temporary isolated auth-test stack on ports 13010–13012, verifies the rehearsal database target, and tests real OAuth proxy behavior using fake GitHub accounts plus the stored browser workflows. It tears down only that temporary stack and retains reports/logs in ignored `artifacts/auth_<run-id>/`. See [authentication coverage](authentication.md). `make docker-test-lifecycle` separately verifies non-root processes, hidden backend ports, shared read-only media, and database persistence by replacing the normal rehearsal containers while retaining the volume. Its fixture setup and media checks use internal container requests so they do not need a human login. It briefly interrupts the Docker rehearsal stack only and retains a JSON report.
 
 To make a rehearsal dump without installing host PostgreSQL tools:
 
@@ -74,6 +75,6 @@ docker compose -f deploy/compose.database.yaml exec -T postgres pg_dump -U postg
 
 Use a new filename for each dump; shell redirection overwrites an existing file. Copy completed backups off the machine and rehearse restore into a NEW test database. Native master backups still use `make backup`; its fixed master target has deliberately not been redirected to this rehearsal cluster. Production container backup/restore automation will be completed with cloud database provisioning, credentials and retention choices.
 
-Docker builds reported vulnerabilities in existing npm dependencies. This packaging milestone preserves those lockfiles; a focused security-update pass is required before public deployment. Local-only port bindings are intentional and should not be loosened as a shortcut.
+Application dependency security updates are recorded in [security maintenance](security-maintenance.md). Local-only port bindings are intentional and should not be loosened as a shortcut.
 
 Implementation references: [Docker startup/health ordering](https://docs.docker.com/compose/how-tos/startup-order/), [Compose secrets](https://docs.docker.com/compose/how-tos/use-secrets/), [Next.js standalone packaging](https://docs.docker.com/guides/nextjs/).
