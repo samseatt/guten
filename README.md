@@ -11,7 +11,7 @@ guten/                    # parent directory
   guten-sites/
 ```
 
-Run `make help` for available commands. Requirements are Python 3, Make, Node/npm, PostgreSQL client tools, and each service's existing dependencies. No new runtime package is required by the command interface.
+Run `make help` for available commands. Requirements are Python 3, Make, Node/npm, PostgreSQL client tools, and each service's existing dependencies. The command interface uses the Python standard library; acceptance tests additionally use the existing Datalake Python dependencies and the pinned Playwright development dependency.
 
 ## Everyday use
 
@@ -26,7 +26,7 @@ make run SERVICE=portal
 make run SERVICE=sites
 ```
 
-The launcher uses the existing local port map: portal 3001, sites 3000, Crust 8000, Datalake 8005, native PostgreSQL 5432. It refuses occupied ports before starting services. It does not adopt, kill, or restart services launched elsewhere. Stop existing manually launched services in their original terminals before using it. Logs remain in the foreground and existing application log files. An unexpectedly exiting child stops the other services started by that invocation.
+The launcher uses the existing local port map: portal 3001, sites 3000, Crust 8000, Datalake 8005, native PostgreSQL 5432. It refuses occupied ports before starting services. It does not adopt, kill, or restart services launched elsewhere. Stop existing manually launched services in their original terminals before using it. Logs remain in the foreground; optional Datalake file logging is configured explicitly. An unexpectedly exiting child stops the other services started by that invocation.
 
 `make status` reports TCP listeners, not application readiness. PostgreSQL is shared with other projects and is never started/stopped/reinitialized by this interface. The browser/API configuration remains in each service's existing environment setup.
 
@@ -68,3 +68,14 @@ See [storage and Git conventions](docs/storage-and-git.md) for media archives, c
 Database evolution: use `make migrate DATABASE=<rehearsal-db>` and `make test TEST_DATABASE=<guten_*_test_*>`. See [migration and ordering contract](../guten-datalake/docs/scoping-and-ordering.md).
 
 See [per-site publishing](../guten-datalake/docs/publishing.md) for the editor workflow, API, migration, and initial publication seeding. Portal/View Draft reads draft; Guten Sites reads published content only.
+
+## Repeatable acceptance tests
+
+```bash
+npm ci
+make acceptance
+```
+
+This creates an empty disposable test database from committed schema/migrations, runs API and headless browser tests on isolated ports, then removes only that database and the processes it started. It does not require a content dump or stop development services. Logs, API results, browser HTML/JUnit reports, and failure traces remain under ignored `artifacts/`. See [testing and prerequisites](docs/testing.md), including browser setup for this Mac and Linux.
+
+Environment examples are committed in each application repo. Datalake requires `DATABASE_URL`; both frontends share `NEXT_PUBLIC_API_BASE_URL`. Public frontend settings must contain no secrets. Authentication, container packaging and cloud deployment remain subsequent work.

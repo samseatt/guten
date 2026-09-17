@@ -10,3 +10,8 @@ __pycache__/
 /archives/
 /backups/
 docs-wip/
+
+node_modules/
+/artifacts/
+/test-results/
+/playwright-report/

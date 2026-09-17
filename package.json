@@ -1,0 +1,12 @@
+{
+  "name": "guten-acceptance",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Cross-service acceptance tests for Guten",
+  "scripts": {
+    "test:browser": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}

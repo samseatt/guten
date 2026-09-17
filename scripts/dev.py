@@ -18,6 +18,8 @@ HELP = """Guten local operations (run make from this repository)
   make build [SERVICE=portal]       Production build; refuses running selected services
   make migrate DATABASE=guten_*_test_*  Apply database migrations (master needs ALLOW_MASTER=1)
   make seed-publications DATABASE=guten_*  Seed never-published sites (master needs ALLOW_MASTER=1)
+  make acceptance                   Run API/browser tests on a disposable empty database
+  make test-db TARGET=guten_manual_test_1 Create a NEW empty migrated test database
   make test TEST_DATABASE=guten_*_test_* Run API integration tests against a rehearsal database
   make backup [ARCHIVE_ROOT=/path]  Archive guten_datalake schema and content
   make restore ARCHIVE=/path TARGET=guten_restore_name
@@ -154,7 +156,7 @@ def check_or_build(action, services):
         if name == "datalake":
             # Python is interpreted. Syntax-check without importing the application,
             # opening DB connections, or creating bytecode files.
-            for folder in (directory / "app", directory / "utils"):
+            for folder in (directory / "app", directory / "utils", directory / "scripts", directory / "tests"):
                 for path in folder.rglob("*.py"):
                     compile(path.read_bytes(), str(path), "exec")
             continue
@@ -194,7 +196,11 @@ def main():
             args.append("--allow-master")
         subprocess.run(args, check=True)
     elif action == "test":
-        subprocess.run([python_command(), "-B", "-m", "unittest", "discover", "-s", "tests", "-v"], cwd=repo("datalake"), check=True)
+        subprocess.run([python_command(), "-B", str(repo("datalake") / "scripts/run_tests.py")], check=True)
+    elif action == "test-db":
+        subprocess.run([python_command(), "-B", str(repo("datalake") / "scripts/database/bootstrap_test_db.py"), "--database", os.environ.get("TARGET", "")], check=True)
+    elif action == "acceptance":
+        subprocess.run([python_command(), "-B", str(Path(__file__).with_name("acceptance.py"))], check=True)
     elif action == "backup":
         args = ["bash", str(repo("datalake") / "scripts/database/backup.sh")]
         if os.environ.get("ARCHIVE_ROOT"):
