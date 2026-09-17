@@ -17,6 +17,7 @@ HELP = """Guten local operations (run make from this repository)
   make check [SERVICE=crust]        Check Python syntax / TypeScript, no emitted files
   make build [SERVICE=portal]       Production build; refuses running selected services
   make migrate DATABASE=guten_*_test_*  Apply database migrations (master needs ALLOW_MASTER=1)
+  make seed-publications DATABASE=guten_*  Seed never-published sites (master needs ALLOW_MASTER=1)
   make test TEST_DATABASE=guten_*_test_* Run API integration tests against a rehearsal database
   make backup [ARCHIVE_ROOT=/path]  Archive guten_datalake schema and content
   make restore ARCHIVE=/path TARGET=guten_restore_name
@@ -183,11 +184,12 @@ def main():
         run_services(services)
     elif action in ("check", "build"):
         check_or_build(action, selected())
-    elif action == "migrate":
+    elif action in ("migrate", "seed-publications"):
         database = os.environ.get("DATABASE", "")
         if not database:
             raise RuntimeError("Specify DATABASE explicitly. Rehearse before migrating the master.")
-        args = [python_command(), "-B", str(repo("datalake") / "scripts/database/migrate.py"), "--database", database]
+        script = "migrate.py" if action == "migrate" else "seed_publications.py"
+        args = [python_command(), "-B", str(repo("datalake") / "scripts/database" / script), "--database", database]
         if os.environ.get("ALLOW_MASTER") == "1":
             args.append("--allow-master")
         subprocess.run(args, check=True)

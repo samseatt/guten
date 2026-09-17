@@ -66,3 +66,5 @@ Docker/container commands and AWS deployment are future additions after applicat
 See [storage and Git conventions](docs/storage-and-git.md) for media archives, commit boundaries, and the proposed S3 path design.
 
 Database evolution: use `make migrate DATABASE=<rehearsal-db>` and `make test TEST_DATABASE=<guten_*_test_*>`. See [migration and ordering contract](../guten-datalake/docs/scoping-and-ordering.md).
+
+See [per-site publishing](../guten-datalake/docs/publishing.md) for the editor workflow, API, migration, and initial publication seeding. Portal/View Draft reads draft; Guten Sites reads published content only.
