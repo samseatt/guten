@@ -64,3 +64,5 @@ These delegate to versioned backup/restore scripts in guten-datalake. Read that 
 Docker/container commands and AWS deployment are future additions after application build and configuration issues are resolved. This first version keeps the existing native services usable. It does not include placeholder deployments, change database topology, install Docker, push Git, or provision AWS. The command interface can later dispatch container builds/Compose and deployment tooling without replacing database archive scripts.
 
 See [storage and Git conventions](docs/storage-and-git.md) for media archives, commit boundaries, and the proposed S3 path design.
+
+Database evolution: use `make migrate DATABASE=<rehearsal-db>` and `make test TEST_DATABASE=<guten_*_test_*>`. See [migration and ordering contract](../guten-datalake/docs/scoping-and-ordering.md).
