@@ -59,3 +59,7 @@ Local retained evidence: `artifacts/postgres17_20260917T173346_d059baa36943/` (r
 ## Database host package
 
 Private TLS PostgreSQL 17 packaging, dedicated app/backup roles, age-encrypted archives and a guarded restore workflow are now implemented; see [database operations](cloud-database.md). Local integration tests precede provisioning. Cross-host firewall enforcement, actual S3 credentials/upload, retention, external alerts and Linux timer validation remain deployment acceptance work.
+
+## Release tooling
+
+Committed-source image building, digest-pinned app-host bundles, read-only schema compatibility checks and explicit deployment/rollback tooling are implemented; see [releases](releases.md). Registry publication and a real two-host deployment/rollback rehearsal remain pending.

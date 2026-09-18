@@ -60,3 +60,7 @@ See [HTTPS gateway tests](https-gateway.md) for the separate gateway image build
 ## Cloud database isolation and recovery
 
 Build `deploy/database/Dockerfile` as `guten-postgres:17-tls`, then run `python3 scripts/test_cloud_database.py`. This uses fresh containers, a unique PostgreSQL 17 volume and synthetic content; it never connects to native PostgreSQL or the existing Docker rehearsal database. It exercises verified TLS through libpq and the actual Datalake asyncpg configuration, least-privilege roles, encrypted archives, corruption guards, recovery and volume persistence. See [cloud database operations](cloud-database.md) for prerequisites and untested deployment boundaries.
+
+## Release bundles and deployment controller
+
+Run `python3 -B -m unittest discover -s tests -p test_releases.py -v`. These tests render real Compose configuration and exercise deployment-state/provenance/schema guards with host mutations and network calls mocked. They do not deploy AWS resources. See [releases](releases.md).
