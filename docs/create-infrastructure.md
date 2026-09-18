@@ -67,3 +67,22 @@ Sources:
 - [CloudFormation deletion policies](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-attribute-deletionpolicy.html)
 - [CloudShell file upload](https://docs.aws.amazon.com/cloudshell/latest/userguide/getting-started.html)
 - [CloudShell pricing](https://aws.amazon.com/cloudshell/pricing/)
+
+## Initial live verification — September 18, 2026
+
+Stack `guten-bootstrap/49a97500-b3b9-11f1-9176-120c6f6718cf` reached CREATE_COMPLETE with termination protection enabled. Live inventory confirms Ubuntu 24.04, us-east-1a, the 4 GB/80 GB app host and 2 GB/60 GB database host. `guten-app-ip` is attached to the app host. Application private IP: `172.26.5.8`; database private IP: `172.26.4.118`.
+
+Actual firewall rules were verified through `GetInstances`: application TCP 80/443 public, TCP 22 restricted to the prepared /32; database only TCP 22 restricted to the same /32. No IPv6 public-port CIDRs are present. The bucket exists as a stack output, but independent encryption/versioning/policy inspection was denied by the audit role and remains pending.
+
+Both SSH connections reached the hosts but rejected the dedicated bootstrap key. The stack's public-key parameter matches the local public key and the API confirms username `ubuntu` and regional `LightsailDefaultKeyPair`. Startup logs must be inspected using the existing regional default key before diagnosing or modifying the launch script. No recreation is planned. First-seen SSH host keys were pinned in ignored `.cloud-provision/known_hosts`; they have not been independently compared against console-provided fingerprints. No Docker installation, database import or application launch has occurred.
+
+
+### SSH bootstrap repair
+
+The regional default key successfully accessed both hosts. Their cloud-init logs showed `set: Illegal option -o pipefail`: Lightsail prepended an `sh` wrapper, so the embedded Bash shebang did not select Bash. The generated launch commands now use POSIX `sh` and `set -eu`.
+
+The corrected commands were applied through `sudo sh` on both existing hosts, preserving the default authorized key. Fresh SSH connections using the dedicated Guten key then succeeded, and the application/database role markers were verified. No instances were recreated. Cloud-init's original error remains historical evidence; the repair did not rerun all cloud-init modules or erase its status. The already-created CloudFormation template still contains the original launch commands; the source fix applies to future generated templates, not a stack update or host replacement.
+
+Seven local infrastructure tests pass, including executing the launch commands under an `sh` wrapper twice, checking key preservation, deduplication, permissions and role markers. Ownership operations alone are substituted in the unprivileged local test; the real commands succeeded on both hosts. Both hosts report x86_64 and ample free disk space. Docker, database restoration and application deployment remain pending.
+
+The downloaded default private key was secured with mode 0600 and copied into ignored `.cloud-provision/`. Its Downloads copy also has mode 0600. Neither private key belongs in Git or a deployment archive.

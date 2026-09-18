@@ -41,8 +41,9 @@ def template(public_key, admin_cidr):
     for logical,name,bundle,role in [('ApplicationHost','guten-app-01','medium_3_0','application'),('DatabaseHost','guten-db-01','small_3_0','database')]:
         # No Docker or database starts here. The next phase establishes host
         # forwarding rules and verified TLS before any database port is published.
-        launch='''#!/bin/bash
-set -euo pipefail
+        # Lightsail prepends an sh wrapper; an embedded shebang is not honored.
+        launch='''#!/bin/sh
+set -eu
 install -d -m 700 -o ubuntu -g ubuntu /home/ubuntu/.ssh
 key='${SshPublicKey}'
 touch /home/ubuntu/.ssh/authorized_keys

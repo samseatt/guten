@@ -64,10 +64,33 @@ class InfrastructureTests(unittest.TestCase):
     def test_launch_script_parses_and_does_not_install_or_start_services(self):
         for name in ('ApplicationHost','DatabaseHost'):
             script=self.config['Resources'][name]['Properties']['UserData']['Fn::Sub'].replace('${SshPublicKey}',self.key)
-            result=subprocess.run(['bash','-n'],input=script,text=True,capture_output=True)
+            result=subprocess.run(['sh','-n'],input=script,text=True,capture_output=True)
             self.assertEqual(result.returncode,0,result.stderr)
             self.assertNotIn('docker',script)
             self.assertNotIn('apt-get',script)
+
+    def test_launch_runs_under_lightsail_sh_wrapper_and_preserves_existing_keys(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            for name,role in [('ApplicationHost','application'),('DatabaseHost','database')]:
+                home=root/name/'home'
+                config=root/name/'etc'
+                home.mkdir(parents=True)
+                authorized=home/'authorized_keys'
+                authorized.write_text('existing-default-key\n')
+                script=self.config['Resources'][name]['Properties']['UserData']['Fn::Sub'].replace('${SshPublicKey}',self.key)
+                script=script.replace('/home/ubuntu/.ssh',str(home)).replace('/etc/guten',str(config))
+                # Test without root; ownership commands are the only mocked operations.
+                script=script.replace('-o ubuntu -g ubuntu ','').replace('chown ubuntu:ubuntu ',': ')
+                wrapped='#!/bin/sh\n# Lightsail initialization precedes user commands.\n'+script
+                for _ in range(2):
+                    result=subprocess.run(['sh'],input=wrapped,text=True,capture_output=True)
+                    self.assertEqual(result.returncode,0,result.stderr)
+                self.assertEqual(authorized.read_text().splitlines(),['existing-default-key',self.key])
+                self.assertEqual(authorized.stat().st_mode & 0o777,0o600)
+                self.assertEqual((config/'host-role').read_text().strip(),role)
+
 
 class LauncherTests(unittest.TestCase):
     def test_launch_prechecks_and_protected_creation_with_fake_aws(self):
