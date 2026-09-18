@@ -17,12 +17,12 @@ Portal's `/` is a small workspace home with a Site Management Dashboard link. Th
 
 Sites' bare `/` is a neutral Guten Sites page directing visitors to their publication address. It does not list hosted sites or assume the `guten` publication exists in every database. Local path-based access (`/<site>/<section>/<page>`) is retained. Local native ports remain 3000/3001; Docker rehearsal ports remain 13000/13001. These are HTTP development addresses, not HTTPS endpoints yet.
 
-## Domain mapping still to implement for deployment
+## Domain mapping and deployment
 
 Use an explicit verified hostname-to-site mapping, not a hostname split or arbitrary Host header interpreted as a site name. Known public domain roots should serve their mapped site's existing landing selection, and section/page links should remain on that domain without adding the internal site slug. This requires more than rewriting `/`: renderer links, redirects, canonical addresses, and published API requests need consistent site/domain context. The public `sites.url` metadata alone must not authorize a hostname mapping.
 
 The production proxy should reject unrecognized hostnames/direct-IP requests with 404 and expose only HTTPS/HTTP redirect ports. Application ports stay private. Thus the neutral bare-root page remains useful locally without becoming a public directory on AWS. `portal.guten.ink` explicitly routes to Portal; its public sibling `guten.ink` routes to Sites. Restrict public-domain APIs to published reads, and scope them to the mapped site. Preserve shared assets and Next.js resources without treating them as content slugs.
 
-DNS records, production hostname rules, custom-domain rewrites and TLS certificates remain deployment work. See [implemented Portal authentication](authentication.md).
+Explicit domain routing and the Caddy gateway are implemented; see [HTTPS gateway configuration and tests](https-gateway.md). DNS changes and public certificate issuance remain deployment work. See [implemented Portal authentication](authentication.md).
 
 References: [Nginx hostname and path routing](https://nginx.org/en/docs/http/request_processing.html), [AWS ALB host/path conditions](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/rule-condition-types.html).

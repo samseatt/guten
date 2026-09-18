@@ -1,0 +1,11 @@
+# Application-host override. Do not combine with compose.local.yaml's local DB network.
+services:
+  datalake:
+    environment:
+      DATABASE_SSL_CA_FILE: /run/config/database_ca
+    volumes:
+      - type: bind
+        source: ${GUTEN_DATABASE_CA_FILE:?Set the trusted database CA certificate path}
+        target: /run/config/database_ca
+        read_only: true
+        bind: {create_host_path: false}

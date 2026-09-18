@@ -1,0 +1,10 @@
+# Install as /etc/guten/database/compose.upload.yaml after configuring a
+# dedicated S3 upload identity. Never use Admin or GutenAudit credentials.
+services:
+  backup:
+    environment:
+      AWS_SHARED_CREDENTIALS_FILE: /run/secrets/backup_aws
+    secrets: [backup_aws]
+secrets:
+  backup_aws:
+    file: /etc/guten/secrets/backup_aws

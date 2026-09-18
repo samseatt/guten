@@ -1,0 +1,14 @@
+[Unit]
+Description=Encrypted Guten database backup and S3 upload
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+UMask=0077
+EnvironmentFile=/etc/guten/database.env
+ExecStart=/usr/bin/flock -n /run/lock/guten-backup.lock /usr/bin/docker compose --env-file /etc/guten/database.env -f /etc/guten/database/compose.yaml -f /etc/guten/database/compose.upload.yaml run --rm -T backup backup --root /backups --recipient-file /run/secrets/recipients --s3-prefix ${GUTEN_BACKUP_S3_PREFIX}
+TimeoutStartSec=2h
+# Surface approaching certificate expiry without preventing the backup.
+ExecStartPost=/usr/bin/openssl x509 -checkend 2592000 -noout -in /etc/guten/database/server.crt

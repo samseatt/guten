@@ -4,10 +4,11 @@ from urllib.parse import parse_qs, urlencode, urlparse
 import html
 import json
 import secrets
+import os
 
 codes = {}
 tokens = {}
-callback = "http://127.0.0.1:13011/oauth2/callback"
+callback = os.environ.get("TEST_OAUTH_CALLBACK", "http://127.0.0.1:13011/oauth2/callback")
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, *args): pass
     def send(self, status, value, content_type="application/json"):

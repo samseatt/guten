@@ -81,3 +81,9 @@ This creates an empty disposable test database from committed schema/migrations,
 Environment examples are committed in each application repo. Datalake requires `DATABASE_URL`; both frontends share `NEXT_PUBLIC_API_BASE_URL`. Public frontend settings must contain no secrets. Cloud deployment remains subsequent work; [container packaging](docs/docker.md) runs locally on alternate ports.
 
 See [root pages and domain routing](docs/domain-routing.md) for the Portal home and recommended production addresses.
+
+See [the agreed Lightsail deployment plan](docs/cloud-plan.md) for the two-host design, Caddy HTTPS and PostgreSQL 17 rehearsal.
+
+See [HTTPS gateway setup and tests](docs/https-gateway.md) for explicit site domains and Caddy configuration.
+
+See [PostgreSQL cloud packaging and encrypted recovery](docs/cloud-database.md) for the private TLS database host, daily backup templates and repeatable local integration test.

@@ -52,3 +52,11 @@ make build
 ```
 
 Checks validate Python syntax and application TypeScript. Builds validate production compilation; stop the ordinary application services first to avoid overwriting their build output. These complement acceptance tests, which currently exercise development-mode Next.js servers. Docker production-container and authentication tests are available through `make docker-test`; see [authentication](authentication.md) and [Docker operations](docker.md). There is no claim of full security, performance, or migration-from-every-historical-version coverage.
+
+## Domain and HTTPS gateway regression
+
+See [HTTPS gateway tests](https-gateway.md) for the separate gateway image builds, domain configuration guards, and browser/OAuth tests through Caddy. Run native acceptance and the Docker gateway suite sequentially on this Intel Mac to avoid cold-compilation timeouts.
+
+## Cloud database isolation and recovery
+
+Build `deploy/database/Dockerfile` as `guten-postgres:17-tls`, then run `python3 scripts/test_cloud_database.py`. This uses fresh containers, a unique PostgreSQL 17 volume and synthetic content; it never connects to native PostgreSQL or the existing Docker rehearsal database. It exercises verified TLS through libpq and the actual Datalake asyncpg configuration, least-privilege roles, encrypted archives, corruption guards, recovery and volume persistence. See [cloud database operations](cloud-database.md) for prerequisites and untested deployment boundaries.
