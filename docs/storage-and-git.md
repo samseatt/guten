@@ -29,10 +29,10 @@ The verified archive supplied on 2026-09-16 is located under /Volumes/macext/arc
 
 Keep serving local files from public/assets while native development continues. Do not remove or relocate them until a replacement serving path is working. Archive folder paths and local disk paths must never become browser URLs.
 
-For the first AWS deployment, prefer the existing root-relative URL contract, for example /assets/example.png:
+For the first AWS deployment, retain the existing root-relative URL contract, for example /assets/example.png. The tested bootstrap serves a shared read-only host directory through Next.js; S3 stores off-host backups. Direct S3/CloudFront delivery below is a later option, not a bootstrap requirement:
 
 - Local: Next.js serves public/assets/example.png.
-- AWS: CloudFront routes /assets/* to an S3 origin; the object key remains assets/example.png. Other routes go to the application origin.
+- Later CDN option: CloudFront routes /assets/* to an S3 origin; the object key remains assets/example.png. Other routes go to the application origin.
 - Keep the S3 bucket private and grant CloudFront origin access control access. Visitors can still view public site images through CloudFront.
 
 This avoids embedding bucket names or environment variables into stored Markdown. The same relative URLs can work across environments and custom domains when their distributions implement the same route. This is a proposed deployment design, not implemented infrastructure.

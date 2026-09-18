@@ -89,3 +89,7 @@ See [HTTPS gateway setup and tests](docs/https-gateway.md) for explicit site dom
 See [PostgreSQL cloud packaging and encrypted recovery](docs/cloud-database.md) for the private TLS database host, daily backup templates and repeatable local integration test.
 
 See [versioned releases and rollback](docs/releases.md) for committed-source image builds, digest-pinned application bundles and explicit deployment/schema guards.
+
+See [bootstrap provisioning and cost controls](docs/provisioning-plan.md) for the resource allowlist, budget proposal and read-only AWS inventory command.
+
+See [create the bootstrap infrastructure](docs/create-infrastructure.md) for the fixed CloudFormation stack and the prepared Admin CloudShell launch procedure.

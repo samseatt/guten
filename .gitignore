@@ -22,3 +22,6 @@ node_modules/
 
 # Generated database host credentials and offline recovery keys
 /.cloud-database/
+
+# Private bootstrap SSH key and generated infrastructure launch files
+/.cloud-provision/
