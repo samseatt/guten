@@ -29,7 +29,7 @@ One known missing file, `neubank.ico`, is referenced by both copies of the Neuba
 
 Initial tar SHA256: `805cf186e13285efb280b7b6b25cd847da636859a2b3bf6c172897fc88ab4d89`.
 
-Before host installation, verify the tar checksum and per-file manifest in a new staging directory, then install with root ownership and file mode 0644. Do not extract an untrusted archive as root. Keep prior media available when coordinating application rollback; the application release controller does not roll media back. Host installation has not yet occurred.
+Before host installation, verify the tar checksum and per-file manifest in a new staging directory, then install with root ownership and file mode 0644. Do not extract an untrusted archive as root. Keep prior media available when coordinating application rollback; the application release controller does not roll media back. The initial bundle was subsequently verified and installed on the app host; see [app-host bootstrap](cloud-app-bootstrap.md).
 
 Run the synthetic path, selection, missing-file and archive-integrity tests with:
 

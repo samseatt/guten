@@ -95,3 +95,5 @@ See [bootstrap provisioning and cost controls](docs/provisioning-plan.md) for th
 See [create the bootstrap infrastructure](docs/create-infrastructure.md) for the fixed CloudFormation stack and the prepared Admin CloudShell launch procedure.
 
 See [initial application release preparation](docs/initial-app-release.md) for private GitHub packages and launch prerequisites, and [referenced media packaging](docs/media-packaging.md) for the separate image bundle.
+
+See [app-host bootstrap](docs/cloud-app-bootstrap.md) for the production credential and verified media installation procedures.

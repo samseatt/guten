@@ -25,3 +25,6 @@ node_modules/
 
 # Private bootstrap SSH key and generated infrastructure launch files
 /.cloud-provision/
+
+# Production app authentication and registry credentials
+/.cloud-app/
