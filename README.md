@@ -107,3 +107,5 @@ Batch 3 adds Adama, See Eight and Glia; current cumulative routing is `deploy/do
 Batch 4 adds Kausar, Moxaic, Neuconomy, Neufacture and Neumm. Current cumulative configuration: `deploy/domains.batch4.json`; see [batch 4 verification](docs/batch4-cutover.md) for DNS-cache and user-acceptance status.
 
 Batch 5 adds Neurocoin, NGOC8, Nudge, Nudger and Omix. Current cumulative configuration: `deploy/domains.batch5.json`; see [batch 5 verification](docs/batch5-cutover.md).
+
+Batch 6 adds Physx, Xfin, Xgaia, Xjur and Xmos. Current cumulative routing: `deploy/domains.batch6.json`; see [batch 6 verification](docs/batch6-cutover.md).
