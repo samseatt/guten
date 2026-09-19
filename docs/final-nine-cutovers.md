@@ -22,3 +22,9 @@ The user was asked for current administrative status and Cloudflare records. No 
 artifacts/final-nine-dns.json records root/www NS, A, AAAA, CNAME, MX, TXT and CAA with query diagnostics. artifacts/batch7-sysb-authoritative.txt and batch7-xnome-authoritative.txt contain additional authoritative checks. Private tests used a temporary loopback-only preview and the current immutable production images, with no public certificates for unready domains.
 
 All nine completed page assertions. Eight exited successfully on the first run; Ineural's first run hit the known preview-route cleanup error after assertions. Its independent rerun passed and is recorded separately. Per-site evidence: artifacts/final-nine-preview-*/ and final-nine-preview-results.json. The known metadata and preview-transport issues remain open; passing these runs does not establish a fix.
+
+## Sysb and Xnome activated
+
+Sam confirmed Namecheap Advanced DNS updates for both domains. Authoritative root A and www CNAME matched AWS before applying guten-batch7-20260919-01. The release succeeded; public DNS browser acceptance passed for both sites plus Guten/Portal regression. Images, canonical URLs, navigation/reload, API isolation and HTTP/www redirects passed. All four new root/www names have trusted Let's Encrypt certificates. User iPhone acceptance is pending.
+
+Evidence: artifacts/batch7-dns-after.json, batch7-deployment.log, batch7-public-*/, batch7-tls.json. Twenty-seven publication sites plus Portal are now live. No database or new infrastructure changes were required. The Cloudflare three-domain release is separately staged and verified at /opt/guten/releases/guten-batch8-20260919-01; its DNS update instructions have been sent, but it is not yet active.
