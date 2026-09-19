@@ -40,7 +40,7 @@ The file has already been generated using the authorized address. In Admin Cloud
 python3 ~/setup-backup-operations.py
 ```
 
-This first reads the live `guten-bootstrap` template and changes only `BackupBucket.LifecycleConfiguration`. Existing rules and parameters are preserved. It creates a change set and refuses to execute unless the only change is a nonreplacement modification of the bucket's lifecycle property. Host resources, IPs, SSH launch commands and database volumes are untouched. This avoids an out-of-band lifecycle edit drifting from CloudFormation. An already-configured lifecycle is a no-op.
+This first reads the live `guten-bootstrap` template and changes only `BackupBucket.LifecycleConfiguration`. Existing rules and parameters are preserved. It creates a change set and refuses to execute unless the changes are the nonreplacement lifecycle modification and, optionally, the exact nonreplacement bucket-policy re-evaluation caused dynamically by `BackupBucket.Arn`. The policy template itself must remain unchanged. Host resources, IPs, SSH launch commands and database volumes are untouched. This avoids an out-of-band lifecycle edit drifting from CloudFormation. An already-configured lifecycle is a no-op.
 
 It then creates the separate `guten-backup-monitoring` stack: SNS topic, email subscription, topic policy, one alarm, and one scoped IAM inline policy attached to the existing upload user. The launcher checks the Admin identity/account and refuses an existing monitoring stack. SNS sends a subscription confirmation email; click its confirmation link. Initial missing-data alarms may occur until the host heartbeat is activated. Do not repeatedly rerun a failed script; inspect the specific stack/change set and retain the error.
 
@@ -74,3 +74,12 @@ sudo journalctl -u guten-backup-health.service -n 30 --no-pager
 ```
 
 References: [CloudWatch missing data](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/alarms-and-missing-data.html), [CloudWatch pricing](https://aws.amazon.com/cloudwatch/pricing/), [S3 lifecycle and version expiry](https://docs.aws.amazon.com/AmazonS3/latest/userguide/intro-lifecycle-rules.html).
+
+
+### Dependency guard correction
+
+The first Admin run prepared but did not execute `guten-retention-a6464d5c20`. CloudFormation also reported `BackupBucketPolicy.PolicyDocument` as a dynamic ResourceAttribute change caused by `BackupBucket.Arn`, with no recreation. The original single-resource guard rejected this safe dependency re-evaluation; the stack remained CREATE_COMPLETE and the change set AVAILABLE.
+
+The updated validator accepts only that precise optional dependency alongside the lifecycle change. It still requires an unchanged template everywhere except lifecycle configuration and rejects direct policy edits, different causes, replacements, unrelated properties and host changes. The actual AWS response is retained as `tests/fixtures/retention-arn-dependency.json` and exercised through the fake-AWS execution test. Change-set details are now saved to a JSON file in CloudShell; the combined launcher prints a concise stage-specific error instead of an embedded-script traceback.
+
+Retry using the newly generated `.cloud-provision/setup-backup-operations-v2.py`. Upload that file to Admin CloudShell and run `python3 ~/setup-backup-operations-v2.py`. It creates and validates a fresh change set; do not manually execute the older one. Monitoring creation and SNS email confirmation then follow as before. AWS execution of the corrected retry remains pending until the user runs it.

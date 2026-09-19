@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Prepare a bucket-only CloudFormation retention update, preserving host resources."""
 import argparse
+import inspect
 from pathlib import Path
 
 
@@ -11,10 +12,41 @@ def rules():
     ]
 
 
+
+def validate_changes(changes):
+    """Allow only lifecycle plus its observed unchanged-policy ARN dependency."""
+    seen=set()
+    for change in changes:
+        r=change.get('ResourceChange',{})
+        name=r.get('LogicalResourceId')
+        if change.get('Type')!='Resource' or name in seen or name not in {'BackupBucket','BackupBucketPolicy'}:
+            raise ValueError('Unexpected/duplicate resource change; NOT executed')
+        seen.add(name)
+        expected_type='AWS::S3::Bucket' if name=='BackupBucket' else 'AWS::S3::BucketPolicy'
+        if r.get('Action')!='Modify' or r.get('Replacement')!='False' or r.get('ResourceType')!=expected_type or r.get('Scope')!=['Properties']:
+            raise ValueError('Unexpected action, type, scope or replacement; NOT executed')
+        details=r.get('Details',[])
+        if len(details)!=1:
+            raise ValueError('Unexpected change details; NOT executed')
+        d=details[0]
+        target=d.get('Target',{})
+        property_name='LifecycleConfiguration' if name=='BackupBucket' else 'PolicyDocument'
+        if target.get('Attribute')!='Properties' or target.get('Name')!=property_name or target.get('RequiresRecreation')!='Never':
+            raise ValueError('Unexpected property change; NOT executed')
+        if name=='BackupBucket':
+            if d.get('Evaluation')!='Static' or d.get('ChangeSource')!='DirectModification' or d.get('CausingEntity'):
+                raise ValueError('Unexpected lifecycle change source; NOT executed')
+        elif d.get('Evaluation')!='Dynamic' or d.get('ChangeSource')!='ResourceAttribute' or d.get('CausingEntity')!='BackupBucket.Arn':
+            raise ValueError('Policy edit is not the known bucket ARN dependency; NOT executed')
+    if 'BackupBucket' not in seen:
+        raise ValueError('Lifecycle change missing; NOT executed')
+
+
 def launcher():
     return '''#!/usr/bin/env python3
 import copy,json,subprocess,uuid
-RETENTION = '''+repr(rules())+'''
+from pathlib import Path
+RETENTION = '''+repr(rules())+'\n'+inspect.getsource(validate_changes)+'''
 
 def aws(*args):
     r=subprocess.run(['aws',*args,'--region','us-east-1','--output','json'],capture_output=True,text=True)
@@ -44,11 +76,12 @@ aws('cloudformation','create-change-set','--stack-name','guten-bootstrap','--cha
 aws('cloudformation','wait','change-set-create-complete','--stack-name','guten-bootstrap','--change-set-name',name)
 change=aws('cloudformation','describe-change-set','--stack-name','guten-bootstrap','--change-set-name',name)
 changes=change['Changes']
-assert len(changes)==1, 'Unexpected additional resource changes; change set NOT executed'
-r=changes[0]['ResourceChange']
-assert r['LogicalResourceId']=='BackupBucket' and r['Action']=='Modify' and r['Replacement']=='False', 'Unexpected replacement/change; NOT executed'
-assert r.get('Details') and all(d['Target'].get('Name')=='LifecycleConfiguration' for d in r['Details']), 'Unexpected property change; NOT executed'
-print('Verified bucket-only, nonreplacement lifecycle change. Executing approved 180+30-day retention.')
+report=Path(name+'-changes.json')
+report.write_text(json.dumps(change,indent=2)+chr(10))
+print('Change-set details saved to '+str(report),flush=True)
+print(json.dumps([{'resource':c['ResourceChange']['LogicalResourceId'],'action':c['ResourceChange']['Action'],'replacement':c['ResourceChange'].get('Replacement')} for c in changes],indent=2),flush=True)
+validate_changes(changes)
+print('Verified nonreplacement lifecycle update and any unchanged-policy ARN dependency. Executing approved retention.')
 aws('cloudformation','execute-change-set','--stack-name','guten-bootstrap','--change-set-name',name)
 aws('cloudformation','wait','stack-update-complete','--stack-name','guten-bootstrap')
 print('Retention update complete. No host or database volume replacement was requested.')

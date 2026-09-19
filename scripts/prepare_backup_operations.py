@@ -7,11 +7,13 @@ from prepare_backup_retention import launcher as retention
 
 
 def combined(email):
-    return ('#!/usr/bin/env python3\n'
-            '# Update only backup lifecycle, then create the small monitoring stack.\n'
-            'try:\n    exec('+repr(retention())+', {})\n'
-            'except SystemExit as exc:\n    if exc.code not in (0,None): raise\n'
-            'exec('+repr(monitoring(template(email)))+', {})\n')
+    return ("#!/usr/bin/env python3\nimport sys\n"
+            "def run_stage(source,name):\n"
+            "    try:\n        exec(compile(source,name,'exec'), {})\n"
+            "    except SystemExit as exc:\n        if exc.code not in (0,None): raise\n"
+            "    except Exception as exc:\n        print(name+': '+str(exc),file=sys.stderr)\n        raise SystemExit(1) from None\n"
+            'run_stage('+repr(retention())+', "retention setup")\n'
+            'run_stage('+repr(monitoring(template(email)))+', "monitoring setup")\n')
 
 
 if __name__=='__main__':

@@ -1,0 +1,51 @@
+[
+  {
+    "Type": "Resource",
+    "ResourceChange": {
+      "Action": "Modify",
+      "LogicalResourceId": "BackupBucketPolicy",
+      "PhysicalResourceId": "guten-backups-983732020946-us-east-1",
+      "ResourceType": "AWS::S3::BucketPolicy",
+      "Replacement": "False",
+      "Scope": [
+        "Properties"
+      ],
+      "Details": [
+        {
+          "Target": {
+            "Attribute": "Properties",
+            "Name": "PolicyDocument",
+            "RequiresRecreation": "Never"
+          },
+          "Evaluation": "Dynamic",
+          "ChangeSource": "ResourceAttribute",
+          "CausingEntity": "BackupBucket.Arn"
+        }
+      ]
+    }
+  },
+  {
+    "Type": "Resource",
+    "ResourceChange": {
+      "Action": "Modify",
+      "LogicalResourceId": "BackupBucket",
+      "PhysicalResourceId": "guten-backups-983732020946-us-east-1",
+      "ResourceType": "AWS::S3::Bucket",
+      "Replacement": "False",
+      "Scope": [
+        "Properties"
+      ],
+      "Details": [
+        {
+          "Target": {
+            "Attribute": "Properties",
+            "Name": "LifecycleConfiguration",
+            "RequiresRecreation": "Never"
+          },
+          "Evaluation": "Static",
+          "ChangeSource": "DirectModification"
+        }
+      ]
+    }
+  }
+]
