@@ -13,7 +13,7 @@ This package is locally rehearsed infrastructure, not an AWS deployment. It uses
 
 These templates need the two actual private IPs and an unused Docker subnet. PostgreSQL binds only the database host's private IP. Its HBA permits `guten_app` to access Guten from the application host IP, and the backup/admin roles from the dedicated database Docker subnet. Plaintext TCP and other clients are rejected. Do not attach unrelated workloads to that Docker network.
 
-At deployment also install Docker-aware host forwarding/firewall restrictions allowing port 5432 only from the application host, and verify from an unauthorized private-network client. Lightsail's public firewall alone is insufficient for private traffic. Public 5432 must remain closed. These host firewall rules are a remaining provisioning task, not implemented by Compose.
+At deployment also install Docker-aware host forwarding/firewall restrictions allowing port 5432 only from the application host, and verify from an unauthorized private-network client. Lightsail's public firewall alone is insufficient for private traffic. Public 5432 must remain closed. These host firewall rules are now installed on both Guten Lightsail hosts and independently verified; they are managed separately from Compose. See [cloud-hosts.md](cloud-hosts.md) for scope, persistence and test evidence.
 
 ## Build and generate (no AWS access required)
 

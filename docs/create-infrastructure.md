@@ -86,3 +86,8 @@ The corrected commands were applied through `sudo sh` on both existing hosts, pr
 Seven local infrastructure tests pass, including executing the launch commands under an `sh` wrapper twice, checking key preservation, deduplication, permissions and role markers. Ownership operations alone are substituted in the unprivileged local test; the real commands succeeded on both hosts. Both hosts report x86_64 and ample free disk space. Docker, database restoration and application deployment remain pending.
 
 The downloaded default private key was secured with mode 0600 and copied into ignored `.cloud-provision/`. Its Downloads copy also has mode 0600. Neither private key belongs in Git or a deployment archive.
+
+
+### Host software follow-up
+
+Docker installation and container ingress guards are now deployed and verified on both hosts. See [cloud-hosts.md](cloud-hosts.md) for repeatable commands, exact versions, Linux packet tests and remaining deployment work.
