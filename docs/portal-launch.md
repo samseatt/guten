@@ -42,3 +42,6 @@ Evidence: `artifacts/cloud-portal-rollback-20260919.log`. Final recorded state i
 External production probes confirmed a trusted Let's Encrypt certificate, HTTP-to-HTTPS redirect, sign-in page HTTP 200, unauthenticated dashboard HTTP 403, and editorial API HTTP 401 including spoofed identity headers. All seven services are healthy/running; only Caddy publishes host ports 80/443. The final service evidence is `artifacts/cloud-portal-final-services-20260919.json`. The staging container/network have been removed; its separate certificate volumes remain available for inspection.
 
 Manual browser acceptance was confirmed on September 18, 2026. Production Portal is available at `https://portal.guten.ink`. The existing `guten.ink` Cloudflare Pages site, other publication DNS records, and native content-master status remain unchanged. No additional AWS resources were provisioned for this phase.
+
+
+Subsequent cutover: Guten public DNS/HTTPS and user acceptance are complete. The [content-master handover](content-master.md) supersedes the view-only restriction above; use production Portal for real edits.

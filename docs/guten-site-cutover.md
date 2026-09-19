@@ -29,7 +29,7 @@ If the public-site cutover fails, restore these two original CNAME/proxy values 
 
 Sam saved both DNS changes. The active release is `guten-public-20260919-01`, prepared from operations commit `5309d3a`, using the previously verified pinned images. Deployment completed successfully. Authoritative DNS resolves both public names to the app host; the five MX records and one TXT record match the saved pre-cutover baseline.
 
-Public browser acceptance passed over normal HTTPS: landing-page redirect, canonical URL, both images, menu navigation, direct reload, publication isolation, and editorial API rejection. HTTP and www redirects preserve the page path. Portal's sign-in page returns 200 and its unauthenticated editorial API returns 401. All three hostnames have trusted Let's Encrypt certificates and negotiated TLS 1.3. The public landing screenshot was visually checked; user visual acceptance is pending.
+Public browser acceptance passed over normal HTTPS: landing-page redirect, canonical URL, both images, menu navigation, direct reload, publication isolation, and editorial API rejection. HTTP and www redirects preserve the page path. Portal's sign-in page returns 200 and its unauthenticated editorial API returns 401. All three hostnames have trusted Let's Encrypt certificates and negotiated TLS 1.3. The public landing screenshot was visually checked; Sam confirmed public pages, images, links and www redirection work correctly.
 
 Evidence is retained locally under ignored `artifacts/`:
 
@@ -48,4 +48,4 @@ PLAYWRIGHT_CHANNEL=chrome GUTEN_PUBLIC_ARTIFACTS=artifacts/guten-public-recheck 
 
 ## Content master
 
-This change serves the cloud copy of published Guten content. It does not make AWS the editing master automatically. Continue view-only acceptance until the content-master switch and any final data reconciliation are explicitly completed.
+The subsequent verified [content-master handover](content-master.md) is complete. AWS is now authoritative; use production Portal for edits and publishing. The native Mac database is a development/reference snapshot.

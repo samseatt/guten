@@ -61,7 +61,7 @@ These delegate to versioned backup/restore scripts in guten-datalake. Read that 
 5. Review Git diffs in each affected repository; commit/push deliberately.
 6. Verify the local content flow before any deployment.
 
-Docker Compose packaging is now available alongside the native launcher. See [Docker setup and operations](docs/docker.md). GitHub login is available for Docker Portal; see [authentication](docs/authentication.md). The two Lightsail hosts and cloud database backups/monitoring are provisioned; Portal is deployed with GitHub authentication, and [guten.ink is live on AWS](docs/guten-site-cutover.md). Other publication domains and the content-master switch remain ahead. Native master backups are unchanged.
+Docker Compose packaging is now available alongside the native launcher. See [Docker setup and operations](docs/docker.md). GitHub login is available for Docker Portal; see [authentication](docs/authentication.md). The two Lightsail hosts and cloud database backups/monitoring are provisioned; Portal is deployed with GitHub authentication, and [guten.ink is live on AWS](docs/guten-site-cutover.md). [AWS is now the content master](docs/content-master.md); use production Portal for real edits. Other publication domains remain to be moved. The native Mac database is a development/reference snapshot.
 
 See [storage and Git conventions](docs/storage-and-git.md) for media archives, commit boundaries, and the proposed S3 path design.
 
