@@ -1,0 +1,11 @@
+# Batch 5: Neurocoin, NGOC8, Nudge, Nudger and Omix
+
+Prepared September 19, 2026. The cumulative deploy/domains.batch5.json preserves the fifteen configured sites and adds neurocoin.cash → neurocoin, ngoc8.com → ngoc8, nudge.ink → nudge, nudger.pro → nudger, omix.cc → omix, each with a www alias redirecting to the canonical root.
+
+Private AWS browser acceptance passed for all five, with unchanged pinned images: landing, two loaded images each, canonical uniqueness and URL, multi-page navigation or single-page reload, editorial/cross-publication API rejection including spoofed headers. Evidence: artifacts/batch5-preview-*/. Four domain-configuration tests passed. Neither previously recorded intermittent metadata nor preview-routing failures appeared in these runs; they are not claimed fixed.
+
+Authoritative DNS baseline is artifacts/batch5-dns-before.json. All final queries succeeded. Neurocoin, NGOC8, Nudge and Nudger still resolve to Namecheap forwarding and www parking CNAMEs. Exact @ URL Redirect targets and www TTL confirmation were requested from the user before edits. Omix already has A @ → 52.54.75.169 and CNAME www → omix.cc; do not ask for redundant Omix DNS changes. The earlier corrected database and domain manifest both use omix.cc; no database changes are needed here.
+
+For the four parked domains, desired website records are A @ → 52.54.75.169 and CNAME www → that domain root, TTL Automatic; preserve BasicDNS and unrelated records. Record exact old forwarding targets for rollback. DNS rollback and application rollback are separate; neither requires a database restore.
+
+Public activation is pending. After DNS confirmation, apply the immutable release, verify certificates and redirects and public browser acceptance, and ask for iPhone verification. Public DNS caches may retain the old forwarding answers. The private preview is removed after preparation; no additional paid infrastructure is needed.

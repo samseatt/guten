@@ -19,3 +19,5 @@ All ten new root/www names have trusted Let's Encrypt certificates. Chrome with 
 Normal public-DNS browser regression passed for Guten and Neubank, including Portal sign-in/API authentication checks. The Mac resolver still returned the five original Namecheap IPs and the five unpinned tests timed out; they are not reported as successful normal-DNS checks. Repeat after cache expiry. User iPhone acceptance is pending. No new canonical issue occurred in the successful direct AWS runs; the previously observed intermittent metadata issue remains open.
 
 No database changes or new AWS resources were needed. No preview containers or SSH preview tunnel remain from preparation. Existing mail records were not altered in this activation.
+
+Sam confirmed iPhone visual acceptance for all five batch-4 domains and pushed b67c97b. This closes user visual acceptance; the recorded normal Mac DNS test gap can be rechecked during subsequent rollout.
