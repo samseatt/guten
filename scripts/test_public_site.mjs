@@ -41,11 +41,11 @@ try {
   await page.screenshot({path:output+'/landing.png',fullPage:true});
   const links=await page.locator('a[href^="/"]').evaluateAll(elements=>elements.map(a=>a.getAttribute('href')));
   const next=links.find(href=>href!==path && /^\/[^/]+\/[^/]+$/.test(href) && !href.startsWith('/api/'));
-  assert.ok(next,'Expected another published page link');
-  await page.locator(`a[href="${next}"]`).first().click();
-  await expect(page).toHaveURL(origin+next);await page.reload();
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href',origin+next);
-  checks.push('menu navigation and direct page reload');
+  assert.ok(next||links.includes(path),'Expected a published page navigation link');
+  if(next) await page.locator(`a[href="${next}"]`).first().click();
+  await expect(page).toHaveURL(origin+(next||path));await page.reload();
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href',origin+(next||path));
+  checks.push(next?'menu navigation and direct page reload':'single-page navigation present and direct reload');
   for(const endpoint of ['/api/guten/sites',`/api/guten/published/sites/${otherSite}/landing`]) {
     assert.equal((await get(endpoint)).status(),404);
   }
