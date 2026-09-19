@@ -1,0 +1,12 @@
+{
+  "portal": "portal.guten.ink",
+  "sites": [
+    {
+      "host": "guten.ink",
+      "site": "guten",
+      "aliases": [
+        "www.guten.ink"
+      ]
+    }
+  ]
+}
