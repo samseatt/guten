@@ -48,6 +48,16 @@ try {
   }
   assert.equal((await get('/api/guten/published/sites/neubank/landing',{'X-Guten-Site':'neubank','X-Forwarded-Host':'neubank.org'})).status(),404);
   checks.push('editorial API, other publications and spoofed publication headers rejected');
+  if (!preview) {
+    for (const url of ['https://www.guten.ink'+path,'http://guten.ink'+path,'http://www.guten.ink'+path]) {
+      const response=await api.get(url,{maxRedirects:0});
+      assert.ok([301,308].includes(response.status()), 'Expected canonical HTTPS redirect');
+      assert.equal(response.headers().location,origin+path);
+    }
+    assert.equal((await api.get('https://portal.guten.ink/oauth2/sign_in')).status(),200);
+    assert.equal((await api.get('https://portal.guten.ink/api/guten/sites')).status(),401);
+    checks.push('www and HTTP redirects preserve the page path; Portal authentication remains enforced');
+  }
   assert.deepEqual(errors,[]);
   fs.writeFileSync(output+'/results.json',JSON.stringify({origin,transport:preview?'loopback SSH preview':'public HTTPS',landing,images,checks},null,2)+'\n');
   console.log(JSON.stringify({landing,images,checks}));
