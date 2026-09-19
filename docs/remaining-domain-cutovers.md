@@ -20,3 +20,13 @@ Full pre-change observations, including NS, A, AAAA, MX, TXT, CAA and www record
 Adaprise and Convergent content also passed private preview tests, but their domains were excluded from batch 3 due to DNS failures. No domain mapping is silently renamed. Existing media/content is unchanged and AWS remains the master.
 
 The rollout continues in small batches after user DNS confirmation and public acceptance. A release adds only ready domains; an application rollback does not undo DNS or content. No new paid AWS resources are needed for these hostname additions.
+
+## User corrections and next actions
+
+Sam confirmed the exact pre-change records for adama.cc, see-eight.com and glia.cash: www CNAME parkingpage.namecheap.com., TTL 30 minutes; @ Unmasked URL Redirect to http://www.<domain>/, no TTL displayed. The three-site release is staged and verified; DNS updates have been requested but not yet confirmed.
+
+Adaprise is still registered at GoDaddy and the user plans a transfer to Namecheap. Do not activate it until working DNS points to AWS; registration transfer alone does not provide DNS readiness. Ineural and Sysb are registered at Namecheap but retained GoDaddy nameservers. Convergent and Xtack also retained domaincontrol.com nameservers. The user switched Sysb to BasicDNS; no stock records appeared, consistent with records not being automatically copied between DNS providers.
+
+Ineural still advertises MX 0 smtp.secureserver.net and MX 10 mailstore1.secureserver.net. Ask whether mail or other services are used before changing its nameservers; public DNS cannot enumerate every subdomain/verification record. Convergent and Xtack SERVFAIL answers do not prove absence of mail. The user has been asked about service use before further nameserver changes. Evidence: artifacts/nameserver-transition-checks.json.
+
+The correct Omix domain is omix.cc, confirmed by the user and resolving to Namecheap parking/mail DNS. The future initial manifest was corrected. Before the requested live correction, encrypted backup guten_20260919T154431Z_3lf9pe17 completed successfully. scripts/data-corrections/20260919_omix_domain.sql transactionally corrected only draft.sites and published.sites rows id 48/name omix from omics.cc to omix.cc, with updated_at timestamps. It guards the database name and exact prior values and refuses reruns after correction. No pages were republished and no other content changed. Verification output: artifacts/omix-domain-correction.log. The native Mac development snapshot was intentionally not updated; cloud is authoritative. Existing immutable release bundles remain untouched.
