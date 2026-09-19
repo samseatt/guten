@@ -30,3 +30,17 @@ Adaprise is still registered at GoDaddy and the user plans a transfer to Nameche
 Ineural still advertises MX 0 smtp.secureserver.net and MX 10 mailstore1.secureserver.net. Ask whether mail or other services are used before changing its nameservers; public DNS cannot enumerate every subdomain/verification record. Convergent and Xtack SERVFAIL answers do not prove absence of mail. The user has been asked about service use before further nameserver changes. Evidence: artifacts/nameserver-transition-checks.json.
 
 The correct Omix domain is omix.cc, confirmed by the user and resolving to Namecheap parking/mail DNS. The future initial manifest was corrected. Before the requested live correction, encrypted backup guten_20260919T154431Z_3lf9pe17 completed successfully. scripts/data-corrections/20260919_omix_domain.sql transactionally corrected only draft.sites and published.sites rows id 48/name omix from omics.cc to omix.cc, with updated_at timestamps. It guards the database name and exact prior values and refuses reruns after correction. No pages were republished and no other content changed. Verification output: artifacts/omix-domain-correction.log. The native Mac development snapshot was intentionally not updated; cloud is authoritative. Existing immutable release bundles remain untouched.
+
+## Mail and future-scope clarification
+
+Sam explicitly confirmed that none of the legacy mail records need preservation. Adaprise's former DiscountASP.NET mail service is also unused and may be discarded. For forthcoming DNS-provider moves, recreate the website records without copying obsolete MX/SPF solely for historical reasons. This does not request mass deletion from unrelated zones during the current batch.
+
+Future idea only: receive mail across the publication domains and provide summaries/agent-assisted handling. No email service, inbound receiver, sending infrastructure, or database changes are authorized by that idea alone; evaluate separately after the website deployment.
+
+## Batch 3 activated
+
+Sam saved DNS changes for adama.cc, see-eight.com and glia.cash. Authoritative A records and www aliases were verified before applying guten-batch3-20260919-01. Deployment completed successfully; all six root/www hostnames have trusted Let's Encrypt certificates. Evidence: artifacts/batch3-deployment.log and batch3-tls.json.
+
+Public browser checks passed for See Eight, Glia, Guten and Neubank, including Portal authentication checks. Adama's first public run failed because two canonical tags persisted beyond five seconds after the client-side landing redirect; an independent rerun passed all assertions. This is an intermittent metadata defect, not established as fixed. Existing root-layout metadata uses request-path headers and the landing component navigates client-side; inspect that interaction in a focused follow-up rather than suppress uniqueness checks. Browser evidence: artifacts/batch3-public-*/ and batch3-public-adama-recheck/. User iPhone acceptance is pending.
+
+Ten publication domains plus Portal are now live. The next release should start from deploy/domains.batch3.json. No new infrastructure, DNS mail cleanup, or database changes occurred in this activation. The old mail-record disposal authorization above applies to future DNS-provider transitions, not an email-service implementation.

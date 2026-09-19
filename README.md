@@ -101,3 +101,5 @@ See [app-host bootstrap](docs/cloud-app-bootstrap.md) for the production credent
 See [Portal-first AWS launch](docs/portal-launch.md) for HTTPS, access checks, rollback evidence and the content-master boundary.
 
 Live domain configuration: [five-domain batch](docs/batch2-cutover.md) adds BIGJ, C4A, Cancer, Caucer and DRX alongside Guten and Neubank. The cumulative manifest is `deploy/domains.batch2.json`.
+
+Batch 3 adds Adama, See Eight and Glia; current cumulative routing is `deploy/domains.batch3.json`. See [remaining-domain progress](docs/remaining-domain-cutovers.md), including the open intermittent canonical-tag issue.
