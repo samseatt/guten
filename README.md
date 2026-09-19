@@ -105,3 +105,5 @@ Live domain configuration: [five-domain batch](docs/batch2-cutover.md) adds BIGJ
 Batch 3 adds Adama, See Eight and Glia; current cumulative routing is `deploy/domains.batch3.json`. See [remaining-domain progress](docs/remaining-domain-cutovers.md), including the open intermittent canonical-tag issue.
 
 Batch 4 adds Kausar, Moxaic, Neuconomy, Neufacture and Neumm. Current cumulative configuration: `deploy/domains.batch4.json`; see [batch 4 verification](docs/batch4-cutover.md) for DNS-cache and user-acceptance status.
+
+Batch 5 adds Neurocoin, NGOC8, Nudge, Nudger and Omix. Current cumulative configuration: `deploy/domains.batch5.json`; see [batch 5 verification](docs/batch5-cutover.md).
