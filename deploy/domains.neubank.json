@@ -1,0 +1,19 @@
+{
+  "portal": "portal.guten.ink",
+  "sites": [
+    {
+      "host": "guten.ink",
+      "site": "guten",
+      "aliases": [
+        "www.guten.ink"
+      ]
+    },
+    {
+      "host": "neubank.org",
+      "site": "neubank",
+      "aliases": [
+        "www.neubank.org"
+      ]
+    }
+  ]
+}

@@ -2,16 +2,19 @@
 import {chromium, request, expect} from '@playwright/test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-const origin='https://guten.ink';
+const origin=process.env.GUTEN_PUBLIC_ORIGIN||'https://guten.ink';
+const hostname=new URL(origin).hostname;
+const site=process.env.GUTEN_PUBLIC_SITE||'guten';
+const otherSite=site==='guten'?'neubank':'guten';
 const preview=process.env.GUTEN_PREVIEW_BASE;
 const output=process.env.GUTEN_PUBLIC_ARTIFACTS;
 if (!output) throw Error('Set GUTEN_PUBLIC_ARTIFACTS to a new artifact directory');
 fs.mkdirSync(output,{recursive:false});
 const api=await request.newContext();
 async function get(path,headers={}) {
-  return api.get((preview||origin)+path,{headers:{...headers,...(preview?{Host:'guten.ink'}:{})}});
+  return api.get((preview||origin)+path,{headers:{...headers,...(preview?{Host:hostname}:{})}});
 }
-const landingResponse=await get('/api/guten/published/sites/guten/landing');
+const landingResponse=await get(`/api/guten/published/sites/${site}/landing`);
 assert.equal(landingResponse.status(),200);
 const landing=await landingResponse.json();
 const path='/'+encodeURIComponent(landing.section_name)+'/'+encodeURIComponent(landing.page_name);
@@ -22,7 +25,7 @@ try {
   if (preview) {
     await context.route(origin+'/**',async route=>{
       const url=new URL(route.request().url());
-      const response=await route.fetch({url:preview+url.pathname+url.search,headers:{...route.request().headers(),host:'guten.ink'},maxRedirects:0});
+      const response=await route.fetch({url:preview+url.pathname+url.search,headers:{...route.request().headers(),host:hostname},maxRedirects:0});
       await route.fulfill({response});
     });
   }
@@ -43,13 +46,13 @@ try {
   await expect(page).toHaveURL(origin+next);await page.reload();
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href',origin+next);
   checks.push('menu navigation and direct page reload');
-  for(const endpoint of ['/api/guten/sites','/api/guten/published/sites/neubank/landing']) {
+  for(const endpoint of ['/api/guten/sites',`/api/guten/published/sites/${otherSite}/landing`]) {
     assert.equal((await get(endpoint)).status(),404);
   }
-  assert.equal((await get('/api/guten/published/sites/neubank/landing',{'X-Guten-Site':'neubank','X-Forwarded-Host':'neubank.org'})).status(),404);
+  assert.equal((await get(`/api/guten/published/sites/${otherSite}/landing`,{'X-Guten-Site':otherSite,'X-Forwarded-Host':otherSite==='guten'?'guten.ink':'neubank.org'})).status(),404);
   checks.push('editorial API, other publications and spoofed publication headers rejected');
   if (!preview) {
-    for (const url of ['https://www.guten.ink'+path,'http://guten.ink'+path,'http://www.guten.ink'+path]) {
+    for (const url of ['https://www.'+hostname+path,'http://'+hostname+path,'http://www.'+hostname+path]) {
       const response=await api.get(url,{maxRedirects:0});
       assert.ok([301,308].includes(response.status()), 'Expected canonical HTTPS redirect');
       assert.equal(response.headers().location,origin+path);
@@ -61,4 +64,8 @@ try {
   assert.deepEqual(errors,[]);
   fs.writeFileSync(output+'/results.json',JSON.stringify({origin,transport:preview?'loopback SSH preview':'public HTTPS',landing,images,checks},null,2)+'\n');
   console.log(JSON.stringify({landing,images,checks}));
-} finally {await context.close();await browser.close();await api.dispose();}
+} finally {
+  // Finish in-flight preview requests before closing their response context.
+  await context.unrouteAll({behavior:'wait'});
+  await context.close();await browser.close();await api.dispose();
+}
