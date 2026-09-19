@@ -1,0 +1,110 @@
+{
+  "portal": "portal.guten.ink",
+  "sites": [
+    {
+      "host": "guten.ink",
+      "site": "guten",
+      "aliases": [
+        "www.guten.ink"
+      ]
+    },
+    {
+      "host": "neubank.org",
+      "site": "neubank",
+      "aliases": [
+        "www.neubank.org"
+      ]
+    },
+    {
+      "host": "bigj.org",
+      "site": "bigj",
+      "aliases": [
+        "www.bigj.org"
+      ]
+    },
+    {
+      "host": "c4a.ca",
+      "site": "c4a",
+      "aliases": [
+        "www.c4a.ca"
+      ]
+    },
+    {
+      "host": "can-cer.com",
+      "site": "cancer",
+      "aliases": [
+        "www.can-cer.com"
+      ]
+    },
+    {
+      "host": "caucer.net",
+      "site": "caucer",
+      "aliases": [
+        "www.caucer.net"
+      ]
+    },
+    {
+      "host": "drx.network",
+      "site": "drx",
+      "aliases": [
+        "www.drx.network"
+      ]
+    },
+    {
+      "host": "adama.cc",
+      "site": "adama",
+      "aliases": [
+        "www.adama.cc"
+      ]
+    },
+    {
+      "host": "see-eight.com",
+      "site": "c8",
+      "aliases": [
+        "www.see-eight.com"
+      ]
+    },
+    {
+      "host": "glia.cash",
+      "site": "glia",
+      "aliases": [
+        "www.glia.cash"
+      ]
+    },
+    {
+      "host": "kausar.life",
+      "site": "kausar",
+      "aliases": [
+        "www.kausar.life"
+      ]
+    },
+    {
+      "host": "moxaic.xyz",
+      "site": "moxaic",
+      "aliases": [
+        "www.moxaic.xyz"
+      ]
+    },
+    {
+      "host": "neuconomy.com",
+      "site": "neuconomy",
+      "aliases": [
+        "www.neuconomy.com"
+      ]
+    },
+    {
+      "host": "neufacture.com",
+      "site": "neufacture",
+      "aliases": [
+        "www.neufacture.com"
+      ]
+    },
+    {
+      "host": "neumm.us",
+      "site": "neumm",
+      "aliases": [
+        "www.neumm.us"
+      ]
+    }
+  ]
+}
