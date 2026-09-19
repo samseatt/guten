@@ -11,6 +11,9 @@ if grep -q 'AGE-SECRET-KEY' /etc/guten/database/recipients.txt; then
     echo 'Private recovery identity must not be on the server.' >&2; exit 1
 fi
 base=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+install -d -m 0755 /usr/local/lib/guten
+install -m 0644 "$base/backup_health.py" /usr/local/lib/guten/backup_health.py
+install -m 0644 "$base/prune_backups.py" /usr/local/lib/guten/prune_backups.py
 install -m 0644 "$base/systemd/guten-backup.service" /etc/systemd/system/guten-backup.service
 install -m 0644 "$base/systemd/guten-backup.timer" /etc/systemd/system/guten-backup.timer
 systemd-analyze verify /etc/systemd/system/guten-backup.service /etc/systemd/system/guten-backup.timer

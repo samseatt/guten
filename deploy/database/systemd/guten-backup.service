@@ -12,3 +12,4 @@ ExecStart=/usr/bin/flock -n /run/lock/guten-backup.lock /usr/bin/docker compose 
 TimeoutStartSec=2h
 # Surface approaching certificate expiry without preventing the backup.
 ExecStartPost=/usr/bin/openssl x509 -checkend 2592000 -noout -in /etc/guten/database/server.crt
+ExecStartPost=/usr/bin/flock -n /run/lock/guten-backup.lock /usr/bin/python3 /usr/local/lib/guten/prune_backups.py --apply

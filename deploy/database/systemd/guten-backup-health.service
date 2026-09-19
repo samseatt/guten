@@ -1,0 +1,11 @@
+[Unit]
+Description=Publish Guten backup health heartbeat
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+UMask=0077
+ExecStart=/usr/bin/python3 /usr/local/lib/guten/backup_health.py --publish
+TimeoutStartSec=3min

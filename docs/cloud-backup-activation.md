@@ -84,3 +84,6 @@ Successful oneshot services return to `inactive`; check `Result=success` and `Ex
 **Remaining before unattended production:** external failed/missed-run and disk-space notifications, deliberate local/S3 retention, and periodic independent recovery rehearsals. There is no email/push alarm and no automatic deletion yet. The operating-system journal is local evidence, not an off-host alarm. Keep monitoring it while those features are pending. At the current small archive size, retaining a few test copies is inexpensive, but future data growth must still be monitored.
 
 Evidence logs: `.cloud-provision/backup-bucket-verification.json`, `backup-permission-tests.log`, `backup-systemd-first-run.log`, `backup-failure-propagation.log`, and `backup-timer-status.log`. No additional AWS infrastructure was created in this activation step; it uses the existing bucket and IAM identity.
+
+
+Retention/monitoring follow-up: approved local retention is now enabled and verified without deleting any current archive. S3 expiry and SNS/CloudWatch monitoring are prepared but await Admin activation. See [backup-monitoring-retention.md](backup-monitoring-retention.md).
