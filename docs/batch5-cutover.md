@@ -19,3 +19,5 @@ All ten root/www names have trusted Let's Encrypt certificates. Direct AWS brows
 Normal public-DNS tests passed for Omix, Guten and Neubank, including Portal sign-in availability and editorial API authentication. The Mac resolver still returned the old Namecheap addresses for Neurocoin, NGOC8, Nudge and Nudger, so ordinary-DNS verification for those four remains pending cache convergence. User iPhone acceptance is pending. The previous intermittent metadata issue did not reproduce here and remains an open follow-up.
 
 Deployment/DNS evidence: artifacts/batch5-deployment.log, batch5-dns-after.json, batch5-mac-resolver.json, batch5-final-containers.txt, and batch5-public-*/. No new infrastructure, database updates or mail configuration changes were made; private preview/tunnel cleanup was completed before activation.
+
+Sam confirmed all five sites passed visual checks on iPhone, and Omix also on Mac; commit 5f8739c was pushed.
