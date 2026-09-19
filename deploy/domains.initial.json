@@ -1,0 +1,141 @@
+{
+  "portal": "portal.guten.ink",
+  "sites": [
+    {
+      "host": "adama.cc",
+      "site": "adama"
+    },
+    {
+      "host": "adaprise.com",
+      "site": "adaprise"
+    },
+    {
+      "host": "bigj.org",
+      "site": "bigj"
+    },
+    {
+      "host": "c4a.ca",
+      "site": "c4a"
+    },
+    {
+      "host": "see-eight.com",
+      "site": "c8"
+    },
+    {
+      "host": "can-cer.com",
+      "site": "cancer"
+    },
+    {
+      "host": "caucer.net",
+      "site": "caucer"
+    },
+    {
+      "host": "convergent.life",
+      "site": "convergent"
+    },
+    {
+      "host": "drx.network",
+      "site": "drx"
+    },
+    {
+      "host": "glia.cash",
+      "site": "glia"
+    },
+    {
+      "host": "guten.ink",
+      "site": "guten"
+    },
+    {
+      "host": "ineural.net",
+      "site": "ineural"
+    },
+    {
+      "host": "kausar.life",
+      "site": "kausar"
+    },
+    {
+      "host": "moxaic.xyz",
+      "site": "moxaic"
+    },
+    {
+      "host": "neubank.org",
+      "site": "neubank"
+    },
+    {
+      "host": "neuconomy.com",
+      "site": "neuconomy"
+    },
+    {
+      "host": "neufacture.com",
+      "site": "neufacture"
+    },
+    {
+      "host": "neumm.us",
+      "site": "neumm"
+    },
+    {
+      "host": "neurocoin.cash",
+      "site": "neurocoin"
+    },
+    {
+      "host": "neuverse.space",
+      "site": "neuverse"
+    },
+    {
+      "host": "ngoc8.com",
+      "site": "ngoc8"
+    },
+    {
+      "host": "nudge.ink",
+      "site": "nudge"
+    },
+    {
+      "host": "nudger.pro",
+      "site": "nudger"
+    },
+    {
+      "host": "omics.cc",
+      "site": "omix"
+    },
+    {
+      "host": "physx.info",
+      "site": "physx"
+    },
+    {
+      "host": "sysb.io",
+      "site": "sysbio"
+    },
+    {
+      "host": "tiers.ai",
+      "site": "tiers"
+    },
+    {
+      "host": "xfin.dev",
+      "site": "xfin"
+    },
+    {
+      "host": "xgaia.org",
+      "site": "xgaia"
+    },
+    {
+      "host": "xjur.is",
+      "site": "xjur"
+    },
+    {
+      "host": "xmed.ai",
+      "site": "xmed"
+    },
+    {
+      "host": "xmos.info",
+      "site": "xmos"
+    },
+    {
+      "host": "xnome.net",
+      "site": "xnome"
+    },
+    {
+      "host": "xtack.com",
+      "site": "xtack"
+    }
+  ]
+}

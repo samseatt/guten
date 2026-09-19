@@ -7,6 +7,7 @@ import re
 import subprocess
 import tempfile
 from package_release import ROOT, APPS, sources
+from publish_release_images import inspect, publish
 
 
 def run(args, **kwargs):
@@ -39,19 +40,11 @@ def main():
                 args+=['--build-arg','NEXT_PUBLIC_API_BASE_URL=/api','--build-arg','NEXT_PUBLIC_GUTEN_SITES_URL=https://guten.ink']
             if service=='portal': args+=['--build-arg','NEXT_PUBLIC_AUTH_ENABLED=true']
             run([*args,str(context)])
-            record['images'][service]={'tag':tag,'source_commit':revision}
-    if a.push:
-        for service,entry in record['images'].items():
-            run(['docker','push',entry['tag']])
-            inspect=run(['docker','image','inspect',entry['tag']],capture_output=True,text=True)
-            digests=json.loads(inspect.stdout)[0].get('RepoDigests',[])
-            repository=entry['tag'].rsplit(':',1)[0]
-            matching=[v for v in digests if v.startswith(repository+'@sha256:')]
-            if len(matching)!=1: raise RuntimeError('Could not identify published digest for '+service)
-            entry['digest']=matching[0]
+            record['images'][service]={'tag':tag,'source_commit':revision,'image_id':inspect(tag)['Id']}
     a.output.parent.mkdir(parents=True,exist_ok=True)
     with a.output.open('x') as stream: json.dump(record,stream,indent=2); stream.write('\n')
     print('Build record:',a.output)
+    if a.push:publish(a.output)
 
 
 if __name__=='__main__': main()

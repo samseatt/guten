@@ -25,7 +25,7 @@ A bundle contains `assets/` plus `media-manifest.json`. Missing files stop packa
 
 The UTC-dated local artifacts are `artifacts/media-20260919-reviewed.json` and `artifacts/media-20260919.tar` (gitignored). The source contains 2,935 files totaling 4,269,241,361 bytes; 301 referenced files total 407,533,521 bytes, about 90% less. Both draft and published references are retained.
 
-One known missing file, `neubank.ico`, is referenced by both copies of the Neubank site. The initial bundle explicitly acknowledges this missing favicon. Relative favicon values such as `favicon.ico` remain listed for later review; no replacement artwork or database edits were made. The `glia.cas` domain value also needs confirmation before DNS setup.
+One known missing file, `neubank.ico`, is referenced by both copies of the Neubank site. The initial bundle explicitly acknowledges this missing favicon. Relative favicon values such as `favicon.ico` remain listed for later review; no replacement artwork or database edits were made. Sam confirmed that Glia uses `glia.cash`. The deployment manifest `deploy/domains.initial.json` uses that correction; the original database value `glia.cas` remains unchanged. This manifest lists the 34 stored site domains plus Portal, without assuming `www` aliases. Review domain ownership/DNS before activating it.
 
 Initial tar SHA256: `805cf186e13285efb280b7b6b25cd847da636859a2b3bf6c172897fc88ab4d89`.
 

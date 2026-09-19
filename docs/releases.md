@@ -20,9 +20,15 @@ python3 scripts/build_release_images.py \
   --output artifacts/build-record.json
 ```
 
-This builds four local images without publishing them. Tags use full source commit IDs; the record includes revisions and tags. Public API paths are `/api`; Portal login is built enabled. Publication domains are runtime configuration, not per-site image builds. Base-image tags in existing app Dockerfiles still resolve at build time; the final deployment digest fixes the result. Save build records and acceptance evidence with the release.
+This builds four local images without publishing them. Tags use full source commit IDs; the record includes revisions, tags and local image IDs. Public API paths are `/api`; Portal login is built enabled. Publication domains are runtime configuration, not per-site image builds. Base-image tags in existing app Dockerfiles still resolve at build time; the final deployment digest fixes the result. Save build records and acceptance evidence with the release.
 
-When registry credentials/permissions have been deliberately configured and publishing is authorized, use `--push` with a new output path. It builds all four images before pushing any, then records registry digests. A failed push may leave some images published; it does not deploy them. Reconcile the build record/digests before packaging. This turn has not published any images or configured a GitHub Actions workflow.
+When registry credentials/permissions have been deliberately configured and publishing is authorized, use `--push` with a new output path. It builds all four images and saves their local IDs before pushing any, then records each registry digest as its upload completes. A failed push may leave some images published; it does not deploy them. Retry the saved record without rebuilding:
+
+```bash
+python3 scripts/publish_release_images.py artifacts/build-record.json
+```
+
+The retry verifies all four local image IDs, architecture and source labels before uploading. Missing or changed images stop the upload. Re-pushing the same images is idempotent; successful digests are saved after each push. Old records without local image IDs cannot be retried automatically. Keep the record on the build machine until publication completes; package only a record with all four registry digests. This is still a manual release path, not an unattended GitHub Actions deployment.
 
 ## 2. Pin the complete image set and package
 

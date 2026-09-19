@@ -125,7 +125,7 @@ class ReleaseTests(unittest.TestCase):
                 return subprocess.CompletedProcess(args,0)
             return original(args,**kwargs)
         output=self.root/'build.json'
-        with patch.object(building,'ROOT',source/'guten'),patch.object(building,'run',side_effect=execute),patch.object(sys,'argv',['build','--registry','example.com/guten','--output',str(output)]):
+        with patch.object(building,'ROOT',source/'guten'),patch.object(building,'run',side_effect=execute),patch.object(building,'inspect',return_value={'Id':'sha256:'+'c'*64}),patch.object(sys,'argv',['build','--registry','example.com/guten','--output',str(output)]):
             building.main()
         self.assertEqual(len(docker_calls),4)
         self.assertTrue(all('--label' in args and 'linux/amd64' in args for args in docker_calls))
