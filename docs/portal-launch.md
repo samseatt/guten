@@ -29,6 +29,16 @@ To repeat the private check, run `scripts/test_cloud_app_private.cjs` through st
 
 ## Next acceptance and content boundary
 
-Real GitHub authorization still needs Sam's manual test at `https://portal.guten.ink/dashboard`, including viewing a draft page and checking its image. Portal's View Published links intentionally remain unavailable while its publication map is empty.
+Sam completed the real GitHub authorization at `https://portal.guten.ink/dashboard` and confirmed all three acceptance checks: successful login, the site list, and a draft page image. This confirms the installed production Client ID/secret pair works. Portal's View Published links intentionally remain unavailable while its publication map is empty.
 
 Use view-only access during this acceptance phase. The native Mac database remains the content master until a deliberate switch is agreed; avoid editing both databases independently. Public site DNS changes and any final content refresh are separate cutover work. Preserve the existing Cloudflare Pages site until the AWS public site is verified.
+
+## Deployment/rollback rehearsal completed
+
+A second immutable release, `guten-portal-20260919-02`, used the same application/gateway image digests and configuration with new installation paths. It deployed successfully using the normal controller. The controller then rolled back successfully to `guten-portal-20260919-01`, preserving the database, media, OAuth secrets and production certificate volumes. Both applications of the controller passed the verified-TLS migration contract and trusted HTTPS smoke check.
+
+Evidence: `artifacts/cloud-portal-rollback-20260919.log`. Final recorded state is healthy, last successful release `guten-portal-20260919-01`, previous release `guten-portal-20260919-02`. This verifies a real release switch and recovery path, not a database/schema rollback or a simulated incompatible application failure.
+
+External production probes confirmed a trusted Let's Encrypt certificate, HTTP-to-HTTPS redirect, sign-in page HTTP 200, unauthenticated dashboard HTTP 403, and editorial API HTTP 401 including spoofed identity headers. All seven services are healthy/running; only Caddy publishes host ports 80/443. The final service evidence is `artifacts/cloud-portal-final-services-20260919.json`. The staging container/network have been removed; its separate certificate volumes remain available for inspection.
+
+Manual browser acceptance was confirmed on September 18, 2026. Production Portal is available at `https://portal.guten.ink`. The existing `guten.ink` Cloudflare Pages site, other publication DNS records, and native content-master status remain unchanged. No additional AWS resources were provisioned for this phase.

@@ -61,7 +61,7 @@ These delegate to versioned backup/restore scripts in guten-datalake. Read that 
 5. Review Git diffs in each affected repository; commit/push deliberately.
 6. Verify the local content flow before any deployment.
 
-Docker Compose packaging is now available alongside the native launcher. See [Docker setup and operations](docs/docker.md). GitHub login is available for Docker Portal; see [authentication](docs/authentication.md). The two Lightsail hosts and cloud database backups/monitoring are provisioned; application deployment and DNS cutover remain ahead. Native master backups are unchanged.
+Docker Compose packaging is now available alongside the native launcher. See [Docker setup and operations](docs/docker.md). GitHub login is available for Docker Portal; see [authentication](docs/authentication.md). The two Lightsail hosts and cloud database backups/monitoring are provisioned; Portal is deployed with GitHub authentication; public-site/content cutover remains ahead. Native master backups are unchanged.
 
 See [storage and Git conventions](docs/storage-and-git.md) for media archives, commit boundaries, and the proposed S3 path design.
 
@@ -97,3 +97,5 @@ See [create the bootstrap infrastructure](docs/create-infrastructure.md) for the
 See [initial application release preparation](docs/initial-app-release.md) for private GitHub packages and launch prerequisites, and [referenced media packaging](docs/media-packaging.md) for the separate image bundle.
 
 See [app-host bootstrap](docs/cloud-app-bootstrap.md) for the production credential and verified media installation procedures.
+
+See [Portal-first AWS launch](docs/portal-launch.md) for HTTPS, access checks, rollback evidence and the content-master boundary.
