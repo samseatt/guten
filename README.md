@@ -99,3 +99,5 @@ See [initial application release preparation](docs/initial-app-release.md) for p
 See [app-host bootstrap](docs/cloud-app-bootstrap.md) for the production credential and verified media installation procedures.
 
 See [Portal-first AWS launch](docs/portal-launch.md) for HTTPS, access checks, rollback evidence and the content-master boundary.
+
+Live domain configuration: [five-domain batch](docs/batch2-cutover.md) adds BIGJ, C4A, Cancer, Caucer and DRX alongside Guten and Neubank. The cumulative manifest is `deploy/domains.batch2.json`.

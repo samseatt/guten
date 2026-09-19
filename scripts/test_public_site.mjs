@@ -33,6 +33,7 @@ try {
   page.on('pageerror',error=>errors.push(error.message));
   await page.goto(origin+'/');
   await expect(page).toHaveURL(origin+path);
+  await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href',origin+path);
   await expect(page.locator('img').first()).toBeVisible();
   await expect.poll(()=>page.locator('img').evaluateAll(images=>images.every(image=>image.complete&&image.naturalWidth>0))).toBe(true);
@@ -44,6 +45,7 @@ try {
   assert.ok(next||links.includes(path),'Expected a published page navigation link');
   if(next) await page.locator(`a[href="${next}"]`).first().click();
   await expect(page).toHaveURL(origin+(next||path));await page.reload();
+  await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href',origin+(next||path));
   checks.push(next?'menu navigation and direct page reload':'single-page navigation present and direct reload');
   for(const endpoint of ['/api/guten/sites',`/api/guten/published/sites/${otherSite}/landing`]) {

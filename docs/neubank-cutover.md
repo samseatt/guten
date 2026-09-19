@@ -40,3 +40,5 @@ Both Neubank names have valid Let's Encrypt certificates (expiry December 18, 20
 The Mac's normal resolver still returned the old Namecheap forwarding IP 162.255.119.142; the unpinned Neubank test timed out. This is not counted as a successful normal-DNS browser test. Repeat that test with a new artifact directory after cache expiry, and obtain user visual acceptance. No machine-wide DNS overrides were installed.
 
 Evidence: `artifacts/neubank-deployment-20260919.log`, `neubank-dns-after.json`, `neubank-origin-tls-20260919.json`, `neubank-origin-browser-results.json`, `neubank-origin-browser.png`, and `guten-after-neubank-browser-20260919/`. Temporary preview containers/tunnel were removed before activation. No database changes or new paid infrastructure were required.
+
+Subsequent acceptance: Sam confirmed Neubank works on iPhone and Foundry works independently of Guten/Portal. Normal Mac DNS public browser acceptance also passed during the five-domain batch on September 19, resolving the earlier cache-related verification gap.
