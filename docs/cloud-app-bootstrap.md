@@ -55,3 +55,13 @@ python3 -B -m unittest discover -s tests -p test_cloud_app_config.py -v
 ```
 
 References: [GitHub registry authentication](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry), [creating an OAuth App](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app).
+
+## Staged release and DNS checkpoint
+
+Release `guten-20260919-01` is staged root-owned at `/opt/guten/releases/guten-20260919-01`. Its host-side plan/checksum validation matches the local release exactly (`artifacts/cloud-release-plan-20260919.json`). The 35-host Caddy configuration passed validation in a network-disabled container (`artifacts/caddy-initial-validation-20260919.log`). No application containers or certificate issuance were started.
+
+The read-only DNS snapshot is `artifacts/dns-before-cutover-20260919.json`. Portal currently returns NXDOMAIN. Guten's authoritative nameservers are Cloudflare; its public addresses are Cloudflare proxy addresses, so DNS alone cannot reveal the configured origin. Neubank and Glia use registrar-servers.com nameservers. No observed A answer directly contained the app-host IP. The following domains returned SERVFAIL and need diagnosis before adding them to an active certificate configuration: `adaprise.com`, `convergent.life`, `omics.cc`, `xtack.com`.
+
+Do not activate the full staged domain list yet. Prepare a smaller reviewed initial deployment after credentials and DNS access are ready; retain the full bundle as a candidate rather than editing it in place. Existing AAAA answers also require review, especially when changing a proxied hostname to direct DNS. DNS records, ownership settings and current websites were not changed.
+
+Four media installer tests and four production credential tests passed. Credential installation and authenticated remote image pulls remain pending the user's GitHub setup.
