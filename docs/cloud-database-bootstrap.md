@@ -61,3 +61,6 @@ sudo docker compose --env-file /etc/guten/database.env \
 The cloud content is a verified copy, not yet the editorial master. Continue treating the local database as the master until deliberate application cutover; any subsequent local edits require a reviewed refresh, not blindly rerunning an import over the cloud database.
 
 Next: configure an offline age recovery identity, a prefix-scoped S3 upload identity, encrypted manual backup and independent restore verification, then enable and monitor the daily backup schedule. S3 policy inspection, retention and external failure alerts remain pending. Do not treat a running cloud database as a completed backup strategy. App release packaging, media transfer, production OAuth and DNS/HTTPS cutover follow after recovery is verified.
+
+
+Backup follow-up: encrypted S3 upload, independent recovery and the daily timer are now active. See [cloud-backup-activation.md](cloud-backup-activation.md) for evidence and remaining notification/retention work.

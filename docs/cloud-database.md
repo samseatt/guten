@@ -1,6 +1,6 @@
 # PostgreSQL cloud host: packaging and recovery
 
-This package was locally rehearsed and is now deployed to the Guten Lightsail database host. Content restoration and TLS/role checks are complete; scheduled off-host backups and application cutover are pending. See [cloud-database-bootstrap.md](cloud-database-bootstrap.md) for the live checkpoint. It uses PostgreSQL 17 in a dedicated external Docker volume, private IPv4 binding, TLS with server identity verification, SCRAM passwords, separate application/backup roles, encrypted logical archives and explicit restore commands. The native Mac PostgreSQL installation, VitalEdge databases and existing PostgreSQL 14 Docker stack are unchanged.
+This package was locally rehearsed and is now deployed to the Guten Lightsail database host. Content restoration, TLS/role checks, encrypted S3 recovery and daily scheduling are complete; external backup alerts, retention and application cutover are pending. See [cloud-database-bootstrap.md](cloud-database-bootstrap.md) for the live checkpoint. It uses PostgreSQL 17 in a dedicated external Docker volume, private IPv4 binding, TLS with server identity verification, SCRAM passwords, separate application/backup roles, encrypted logical archives and explicit restore commands. The native Mac PostgreSQL installation, VitalEdge databases and existing PostgreSQL 14 Docker stack are unchanged.
 
 ## Files and boundaries
 
@@ -97,7 +97,7 @@ docker compose --env-file /etc/guten/database.env \
   --s3-prefix s3://YOUR-BUCKET/guten/database
 ```
 
-Ciphertext uploads first, manifest last; both must succeed for an `UPLOADED` receipt locally. Remote recovery requires both files and successful checksum/decryption. Upload failure fails the job but preserves the completed local archive. The ciphertext is already age-encrypted; upload additionally requests S3 SSE-S3 encryption. No real S3 access has been tested yet.
+Ciphertext uploads first, manifest last; both must succeed for an `UPLOADED` receipt locally. Remote recovery requires both files and successful checksum/decryption. Upload failure fails the job but preserves the completed local archive. The ciphertext is already age-encrypted; upload additionally requests S3 SSE-S3 encryption. Real S3 upload/download and independent restore have now passed; see [cloud-backup-activation.md](cloud-backup-activation.md).
 
 Install the two unit files into `/etc/systemd/system/`, then:
 
@@ -109,7 +109,7 @@ systemctl list-timers guten-backup.timer
 journalctl -u guten-backup.service
 ```
 
-The job runs daily around 03:00 UTC with a short randomized delay, catches up missed runs, and uses a lock to avoid concurrent scheduled backups. Linux service execution has not been tested on this Mac. **Before live cutover**, wire failed/missed backups and low disk space into an external notification, and verify an uploaded archive can be downloaded and restored. Service exit status/journal alone is not an off-host alert.
+The job runs daily around 03:00 UTC with a short randomized delay, catches up missed runs, and uses a lock to avoid concurrent scheduled backups. The service has now been tested on the Linux database host and the timer enabled; its detailed status is in [cloud-backup-activation.md](cloud-backup-activation.md). **Before live cutover**, wire failed/missed backups and low disk space into an external notification, and verify an uploaded archive can be downloaded and restored. Service exit status/journal alone is not an off-host alert.
 
 No automatic archive deletion is enabled. Initially keep all backups; configure and test S3 lifecycle and conservative local retention before unattended production operation. Local deletion must require successful off-host upload and an adequate verified recovery history. Account for failed/incomplete backups in disk monitoring.
 
