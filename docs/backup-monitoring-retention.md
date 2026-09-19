@@ -4,7 +4,7 @@
 
 The user approved local retention of 30 days, always preserving the newest seven successfully uploaded archives; S3 current-object expiration after 180 days and noncurrent-version expiration after another 30 days; failed/unuploaded local archives remain for inspection. SNS email notifications to the supplied address were authorized separately.
 
-Local retention is deployed as an ExecStartPost hook after a successful backup and certificate check. The job uses the same backup lock. All current files are recent: dry-run and real execution selected zero archives for deletion. The local inspector reports healthy backup status and approximately 93% free disk. No cloud alarm or S3 completed-object expiration has been activated yet; the Admin handoff below is pending.
+Local retention is deployed as an ExecStartPost hook after a successful backup and certificate check. The job uses the same backup lock. All current files are recent: dry-run and real execution selected zero archives for deletion. The local inspector reports healthy backup status and approximately 93% free disk. The cloud alarm and approved S3 lifecycle are now deployed; the subscription is confirmed and the heartbeat timer is active. See the live activation record below for verification and the email-delivery test status.
 
 ## Monitoring design
 
@@ -44,7 +44,7 @@ This first reads the live `guten-bootstrap` template and changes only `BackupBuc
 
 It then creates the separate `guten-backup-monitoring` stack: SNS topic, email subscription, topic policy, one alarm, and one scoped IAM inline policy attached to the existing upload user. The launcher checks the Admin identity/account and refuses an existing monitoring stack. SNS sends a subscription confirmation email; click its confirmation link. Initial missing-data alarms may occur until the host heartbeat is activated. Do not repeatedly rerun a failed script; inspect the specific stack/change set and retain the error.
 
-After the user reports completion, verify stack status, bucket lifecycle, subscription confirmation and alarm settings, start the heartbeat manually, and enable `guten-backup-health.timer`. `deploy/database/activate-monitoring.sh` is the repeatable host installer. Its unit files and inspector are already staged on the database host, but its timer is not enabled because publication permission is still pending. Finish with an end-to-end alert/recovery test and confirm email receipt before claiming notifications work.
+After the user reports completion, verify stack status, bucket lifecycle, subscription confirmation and alarm settings, start the heartbeat manually, and enable `guten-backup-health.timer`. `deploy/database/activate-monitoring.sh` is the repeatable host installer. Its unit files and inspector are installed; the timer has now been enabled after successful metric publication. Finish with an end-to-end alert/recovery test and confirm email receipt before claiming notifications work.
 
 ## Retention safeguards
 
@@ -83,3 +83,14 @@ The first Admin run prepared but did not execute `guten-retention-a6464d5c20`. C
 The updated validator accepts only that precise optional dependency alongside the lifecycle change. It still requires an unchanged template everywhere except lifecycle configuration and rejects direct policy edits, different causes, replacements, unrelated properties and host changes. The actual AWS response is retained as `tests/fixtures/retention-arn-dependency.json` and exercised through the fake-AWS execution test. Change-set details are now saved to a JSON file in CloudShell; the combined launcher prints a concise stage-specific error instead of an embedded-script traceback.
 
 Retry using the newly generated `.cloud-provision/setup-backup-operations-v2.py`. Upload that file to Admin CloudShell and run `python3 ~/setup-backup-operations-v2.py`. It creates and validates a fresh change set; do not manually execute the older one. Monitoring creation and SNS email confirmation then follow as before. AWS execution of the corrected retry remains pending until the user runs it.
+
+
+### Live activation after v2
+
+The user ran v2 successfully and confirmed the SNS email subscription. Read-only AWS checks verified `guten-backup-monitoring` is CREATE_COMPLETE, `guten-bootstrap` is UPDATE_COMPLETE, and S3 has the approved 180-day current-object / 30-day noncurrent-version retention and scoped delete-marker cleanup. The original incomplete-multipart rule remains. `ListSubscriptionsByTopic` returned a confirmed subscription ARN, not PendingConfirmation.
+
+`activate-monitoring.sh` succeeded on the database host. The first heartbeat reported code 0 (healthy), a recent successful upload and 93.44% free disk, and CloudWatch accepted the metric publication. The systemd service returned Result=success / ExecMainStatus=0; `guten-backup-health.timer` is enabled at 15-minute boundaries. Evidence: `.cloud-provision/monitoring-activation.log`.
+
+GutenAudit cannot call `cloudwatch:DescribeAlarms` or control alarm state with its current permissions. Rather than broaden access, an Admin CloudShell test was requested: temporarily set the named alarm to OK and then ALARM with a TEST ONLY reason, and confirm receipt. Subscription confirmation and successful metric publication alone are not proof of alarm email delivery. That final confirmation is pending at this record.
+
+The five generated local setup files (including v2 and superseded variants) were moved to ignored `.cloud-provision/retired-setup/`, renamed with `.retired.txt`, and made nonexecutable. Maintained Git source generators remain available. No keys/credentials were moved or deleted. CloudFormation lists no remaining change sets for `guten-bootstrap`; the old blocked change set is no longer available. Copies uploaded into the user's CloudShell home are separate files and were not removed remotely.

@@ -87,3 +87,6 @@ Evidence logs: `.cloud-provision/backup-bucket-verification.json`, `backup-permi
 
 
 Retention/monitoring follow-up: approved local retention is now enabled and verified without deleting any current archive. S3 expiry and SNS/CloudWatch monitoring are prepared but await Admin activation. See [backup-monitoring-retention.md](backup-monitoring-retention.md).
+
+
+Monitoring/retention activation follow-up: the approved S3 lifecycle is deployed, SNS subscription confirmed, and healthy heartbeats are now publishing every 15 minutes. See [backup-monitoring-retention.md](backup-monitoring-retention.md) for the final email-delivery test status.
