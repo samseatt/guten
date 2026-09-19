@@ -28,3 +28,5 @@ All nine completed page assertions. Eight exited successfully on the first run; 
 Sam confirmed Namecheap Advanced DNS updates for both domains. Authoritative root A and www CNAME matched AWS before applying guten-batch7-20260919-01. The release succeeded; public DNS browser acceptance passed for both sites plus Guten/Portal regression. Images, canonical URLs, navigation/reload, API isolation and HTTP/www redirects passed. All four new root/www names have trusted Let's Encrypt certificates. User iPhone acceptance is pending.
 
 Evidence: artifacts/batch7-dns-after.json, batch7-deployment.log, batch7-public-*/, batch7-tls.json. Twenty-seven publication sites plus Portal are now live. No database or new infrastructure changes were required. The Cloudflare three-domain release is separately staged and verified at /opt/guten/releases/guten-batch8-20260919-01; its DNS update instructions have been sent, but it is not yet active.
+
+Sam visually accepted Sysb and Xnome on both Mac and iPhone and pushed both related commits. The three Cloudflare domains have now been activated; see cloudflare-publication-cutover.md for verification evidence.

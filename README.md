@@ -111,3 +111,5 @@ Batch 5 adds Neurocoin, NGOC8, Nudge, Nudger and Omix. Current cumulative config
 Batch 6 adds Physx, Xfin, Xgaia, Xjur and Xmos. Current cumulative routing: `deploy/domains.batch6.json`; see [batch 6 verification](docs/batch6-cutover.md).
 
 Batch 7 adds Sysb and Xnome. Current live manifest: `deploy/domains.batch7.json`; the Cloudflare `batch8` manifest is staged, not live. See [final-domain progress](docs/final-nine-cutovers.md).
+
+Batch 8 activates Neuverse, Tiers and Xmed after their Cloudflare DNS changes. Current live manifest: `deploy/domains.batch8.json` (30 publications plus Portal). See [Cloudflare cutover evidence](docs/cloudflare-publication-cutover.md).
