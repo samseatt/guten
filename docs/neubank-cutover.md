@@ -1,6 +1,6 @@
 # Neubank domain cutover
 
-Prepared September 19, 2026 UTC; DNS change and public activation pending.
+Activated September 19, 2026 UTC; user visual acceptance and local recursive DNS convergence pending.
 
 The candidate `deploy/domains.neubank.json` preserves Guten and Portal and adds only `neubank.org` for published site `neubank`, with `www.neubank.org` redirected to the canonical hostname. AWS remains the content master; no database import or content edit is involved.
 
@@ -30,3 +30,13 @@ The old Cloudflare Pages project can separately serve `foundry.guten.ink`. Add t
 References: https://developers.cloudflare.com/pages/configuration/custom-domains/ and https://www.namecheap.com/support/knowledgebase/article.aspx/319/78/how-can-i-set-up-an-a-address-record-for-my-domain/
 
 The immutable release `guten-neubank-20260919-01` is staged on the app host and passed bundle verification. The private preview containers and SSH tunnel have been removed. Public activation awaits confirmation of the two Namecheap record changes.
+
+## Activation result
+
+Sam saved the A/CNAME records and kept BasicDNS. Authoritative DNS confirms root A 52.54.75.169 and www CNAME neubank.org. Nameservers, all five MX records and SPF TXT match the baseline; no root AAAA remains. Release `guten-neubank-20260919-01` applied successfully and passed its trusted public HTTPS smoke checks.
+
+Both Neubank names have valid Let's Encrypt certificates (expiry December 18, 2026). Chrome acceptance with hostname resolution explicitly pinned to the AWS IP passed landing, images, canonical URL, navigation/reload, API isolation, www redirect and absence of browser errors. Certificate verification remained enabled. HTTP and www redirects preserve the page path. Guten's normal public browser suite passed, including Portal sign-in availability and unauthenticated API rejection.
+
+The Mac's normal resolver still returned the old Namecheap forwarding IP 162.255.119.142; the unpinned Neubank test timed out. This is not counted as a successful normal-DNS browser test. Repeat that test with a new artifact directory after cache expiry, and obtain user visual acceptance. No machine-wide DNS overrides were installed.
+
+Evidence: `artifacts/neubank-deployment-20260919.log`, `neubank-dns-after.json`, `neubank-origin-tls-20260919.json`, `neubank-origin-browser-results.json`, `neubank-origin-browser.png`, and `guten-after-neubank-browser-20260919/`. Temporary preview containers/tunnel were removed before activation. No database changes or new paid infrastructure were required.
