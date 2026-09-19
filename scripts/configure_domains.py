@@ -32,7 +32,10 @@ def generate(manifest, target, test=False):
             if alias in occupied: raise ValueError('Duplicate hostname: '+alias)
             occupied.add(alias)
             aliases[alias] = host
-    if not domains: raise ValueError('At least one publication is required')
+    if not domains and manifest.get('portal_only') is not True:
+        raise ValueError('At least one publication is required unless portal_only is explicitly true')
+    if domains and manifest.get('portal_only'):
+        raise ValueError('portal_only cannot include publication domains')
     if test and any(not h.endswith('.test') for h in occupied):
         raise ValueError('Local TLS rehearsal requires .test names only')
     if not test and any(h.endswith(('.test', '.localhost', '.invalid')) for h in occupied):

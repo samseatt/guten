@@ -65,3 +65,11 @@ The read-only DNS snapshot is `artifacts/dns-before-cutover-20260919.json`. Port
 Do not activate the full staged domain list yet. Prepare a smaller reviewed initial deployment after credentials and DNS access are ready; retain the full bundle as a candidate rather than editing it in place. Existing AAAA answers also require review, especially when changing a proxied hostname to direct DNS. DNS records, ownership settings and current websites were not changed.
 
 Four media installer tests and four production credential tests passed. Credential installation and authenticated remote image pulls remain pending the user's GitHub setup.
+
+## Credentials and image preflight completed
+
+On September 18, 2026, the completed files passed validation and were installed on the app host. GitHub confirmed user `samseatt` with exactly `read:packages`; the token expires December 18, 2026 at 03:40:16 UTC. Archive the entire private `.cloud-app` directory, including the generated cookie key. OAuth syntax/security settings are verified; only a real authorization-code exchange can establish that the production Client ID/secret pair works.
+
+All seven pinned images pulled successfully on Lightsail. Application architecture and revision labels matched the release, and the candidate Datalake image passed its read-only migration-contract check over verified PostgreSQL TLS. Evidence: `artifacts/cloud-app-credentials-20260919.log` and `artifacts/cloud-app-preflight-20260919.log` (neither contains credentials).
+
+For the first public launch, `deploy/domains.portal-only.json` explicitly sets `portal_only: true` and an empty sites list. The generator otherwise continues rejecting empty publication lists. This mode exposes only authenticated Portal through Caddy; the public Nginx listener rejects every host. Portal's View Published links are unavailable until publication domains are configured. All draft management/previews remain available after sign-in. Existing public sites and their DNS stay unchanged.
