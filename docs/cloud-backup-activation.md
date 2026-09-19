@@ -90,3 +90,6 @@ Retention/monitoring follow-up: approved local retention is now enabled and veri
 
 
 Monitoring/retention activation follow-up: the approved S3 lifecycle is deployed, SNS subscription confirmed, and healthy heartbeats are now publishing every 15 minutes. See [backup-monitoring-retention.md](backup-monitoring-retention.md) for the final email-delivery test status.
+
+
+Final notification verification: the user received both OK and ALARM test emails, and healthy metric publication was rechecked afterward. The backup operations milestone is complete; see [backup-monitoring-retention.md](backup-monitoring-retention.md).
