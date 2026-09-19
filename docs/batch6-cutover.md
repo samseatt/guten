@@ -21,3 +21,5 @@ All ten new root/www hostnames have trusted Let's Encrypt certificates. Direct A
 The Mac resolver still returned the five old Namecheap forwarding addresses (artifacts/batch6-mac-resolver.json), so normal local-DNS acceptance for these new names awaits cache convergence. Ordinary public-DNS tests passed for Guten and Neubank, including Portal authentication checks (artifacts/batch6-public-*/). User iPhone acceptance is pending. The earlier intermittent canonical issue did not reproduce and remains an open follow-up.
 
 No conflicting root AAAA or CAA was observed on the successful TCP rechecks after an initial UDP timeout. Evidence: artifacts/batch6-dns-tls-prerequisites.json. No new infrastructure, database changes or mail-record edits occurred in this activation. Private preview resources were removed during preparation.
+
+Sam confirmed iPhone visual acceptance for all five domains and pushed f10432a.
