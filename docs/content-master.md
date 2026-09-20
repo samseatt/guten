@@ -23,7 +23,7 @@ The archive contains encrypted `full.dump.age` and its manifest. Independent rec
 ## Editing and deployments
 
 - Make real edits in the production Portal. Check View Draft, then publish deliberately and verify View Published.
-- Only Guten and Portal domains have moved so far. Other sites remain in the cloud database, but their domain cutovers are separate tasks.
+- All 34 original publication domains and Portal are now live on AWS. New publications need a separate domain activation; follow [the add-a-site cookbook](add-a-site.md).
 - Code deployments update containers/configuration, not production content. Never restore the old Mac dump over production as part of a routine deployment.
 - Before future migrations, take a cloud backup and rehearse against a restored copy. Refresh development from cloud archives into a new disposable database; do not silently replace the native database or unrelated project databases.
 - Media files are still the packaged assets on the application host. Editing text does not upload new images. New media requires the existing deliberate packaging/release process.

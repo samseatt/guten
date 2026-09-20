@@ -13,6 +13,8 @@ guten/                    # parent directory
 
 Run `make help` for available commands. Requirements are Python 3, Make, Node/npm, PostgreSQL client tools, and each service's existing dependencies. The command interface uses the Python standard library; acceptance tests additionally use the existing Datalake Python dependencies and the pinned Playwright development dependency.
 
+For editors and domain owners, start with [Add a website to Guten](docs/add-a-site.md): Portal content, images, draft review, publishing, DNS and the operator launch handoff.
+
 ## Everyday use
 
 ```bash
