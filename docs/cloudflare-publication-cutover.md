@@ -27,3 +27,5 @@ All three sites passed ordinary public-DNS browser acceptance: landing, images, 
 Evidence: artifacts/batch8-dns-after.json, batch8-mac-resolver.json, batch8-deployment.log, batch8-public-*/, batch8-tls.json, batch8-mail-dns-check.json, batch8-final-containers.txt. No DNS override was required for these public browser tests. The previous intermittent metadata/preview issues did not reproduce and remain separate follow-ups.
 
 Remaining publication domains: adaprise.com, convergent.life, ineural.net and xtack.com. Keep them excluded until their registration/delegation/website records are ready.
+
+Sam visually confirmed all three Cloudflare domains and pushed eb2c4e6. User acceptance is complete.
