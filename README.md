@@ -100,18 +100,6 @@ See [app-host bootstrap](docs/cloud-app-bootstrap.md) for the production credent
 
 See [Portal-first AWS launch](docs/portal-launch.md) for HTTPS, access checks, rollback evidence and the content-master boundary.
 
-Live domain configuration: [five-domain batch](docs/batch2-cutover.md) adds BIGJ, C4A, Cancer, Caucer and DRX alongside Guten and Neubank. The cumulative manifest is `deploy/domains.batch2.json`.
+Live deployment: **34 publication sites plus Portal**, using `deploy/domains.batch9.json` and release `guten-batch9-20260919-01`. All publication sites have passed user visual acceptance. See [final rollout verification](docs/final-four-cutover.md).
 
-Batch 3 adds Adama, See Eight and Glia; current cumulative routing is `deploy/domains.batch3.json`. See [remaining-domain progress](docs/remaining-domain-cutovers.md), including the open intermittent canonical-tag issue.
-
-Batch 4 adds Kausar, Moxaic, Neuconomy, Neufacture and Neumm. Current cumulative configuration: `deploy/domains.batch4.json`; see [batch 4 verification](docs/batch4-cutover.md) for DNS-cache and user-acceptance status.
-
-Batch 5 adds Neurocoin, NGOC8, Nudge, Nudger and Omix. Current cumulative configuration: `deploy/domains.batch5.json`; see [batch 5 verification](docs/batch5-cutover.md).
-
-Batch 6 adds Physx, Xfin, Xgaia, Xjur and Xmos. Current cumulative routing: `deploy/domains.batch6.json`; see [batch 6 verification](docs/batch6-cutover.md).
-
-Batch 7 adds Sysb and Xnome. Current live manifest: `deploy/domains.batch7.json`; the Cloudflare `batch8` manifest is staged, not live. See [final-domain progress](docs/final-nine-cutovers.md).
-
-Batch 8 activates Neuverse, Tiers and Xmed after their Cloudflare DNS changes. Current live manifest: `deploy/domains.batch8.json` (30 publications plus Portal). See [Cloudflare cutover evidence](docs/cloudflare-publication-cutover.md).
-
-The final ready-site release adds Adaprise, Ineural and Xtack (33 publications plus Portal). Active manifest: `deploy/domains.batch9-ready.json`. Convergent is staged pending recursive DNS convergence; see [final-four status](docs/final-four-cutover.md).
+Earlier cutover records preserve DNS rollback settings and verification evidence: [initial five-domain batch](docs/batch2-cutover.md), [Adama/See Eight/Glia](docs/remaining-domain-cutovers.md), [batch 4](docs/batch4-cutover.md), [batch 5](docs/batch5-cutover.md), [batch 6](docs/batch6-cutover.md), [Sysb/Xnome](docs/final-nine-cutovers.md), and [Cloudflare domains](docs/cloudflare-publication-cutover.md). Their manifests are historical snapshots, not the current live configuration. The intermittent canonical-tag and preview-test cleanup issues recorded in those reports remain open.
