@@ -39,7 +39,7 @@ sudo python3 /home/ubuntu/guten-stage/install_media.py \
 
 The installer checks the full archive before and after processing, every file's size/hash, and the exact manifest/member set. It rejects links, duplicates and unsafe paths. It never calls unrestricted tar extraction. Verified files are installed under `/srv/guten/media/<archive-sha256>/assets`, with a root-owned `/srv/guten/assets` symlink to that version. Files are 0644 and directories 0755. Symlink permissions display as 0777; write control belongs to the root-owned parent directory.
 
-The initial installer refuses an existing active path or version. For subsequent media changes, plan an explicit switch and recreate the frontend containers so their bind mounts resolve the new version; retain previous media for rollback. Do not rerun this initial installer to overwrite live assets.
+The initial installer refuses an existing active path or version. For subsequent media changes, plan an explicit switch and recreate the frontend containers so their bind mounts resolve the new version; retain previous media for rollback. Do not rerun this initial installer to overwrite live assets. For subsequent trusted-operator updates, see [manual image uploads](manual-image-upload.md).
 
 ## Current evidence
 

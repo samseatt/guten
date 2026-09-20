@@ -64,7 +64,7 @@ For the operator: production files currently live under `/srv/guten/assets` on t
 
 - Inventory **current AWS draft and published references**, not the old native Mac database. `package_media.py` uses PostgreSQL client connection settings and defaults to a local connection unless configured otherwise. Verify the connection target before running it; do not copy passwords into commands or documentation.
 - A replacement media version must preserve files needed by existing sites, including published content no longer referenced by a newer draft. An inventory of only the new site's files is not a replacement for the whole shared directory.
-- The current installer is a **first-install** tool: it refuses an existing active path. Subsequent media staging, verified version switching and frontend container recreation require an operator-planned update. There is not yet a one-command ongoing media-update workflow. Do not rerun the bootstrap example expecting it to overwrite live assets.
+- The current installer is a **first-install** tool: it refuses an existing active path. For subsequent media staging, verified version switching and frontend recreation, follow [manual image uploads](manual-image-upload.md). There is not yet a Portal upload or one-command ongoing media-update workflow. Do not rerun the bootstrap example expecting it to overwrite live assets.
 - Archive the source files and verified bundle separately. Database backups store references, not the image bytes. Keep the prior media version for recovery.
 
 An editor's handoff can be as simple as: “Please install these three Field Notes files at these `/assets/fieldnotes/...` paths and confirm when they are available in View Draft.”

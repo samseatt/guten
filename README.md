@@ -15,6 +15,8 @@ Run `make help` for available commands. Requirements are Python 3, Make, Node/np
 
 For editors and domain owners, start with [Add a website to Guten](docs/add-a-site.md): Portal content, images, draft review, publishing, DNS and the operator launch handoff.
 
+For interim image changes, use [Manual image uploads](docs/manual-image-upload.md): Mac SSH/SCP, protected installation, frontend recreation and media rollback.
+
 ## Everyday use
 
 ```bash
