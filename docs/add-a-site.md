@@ -58,7 +58,7 @@ Give the operator the files and their intended paths. Prefer a site-specific fol
 
 Do not enter a Mac path such as `/Users/...`, a `file://` address, or `localhost`. Readers cannot access your computer. Use a leading `/assets/` for shared Guten files. The operator must confirm that the exact filename, capitalization and extension exist.
 
-**Images are shared between draft and published rendering.** Replacing an existing file can change the live site's appearance without pressing Publish. Use `welcome-v2.png` for a revision, point the draft to it, review it, then publish. Keep the old file while any draft or published page still references it.
+**Images are shared between draft and published rendering.** Replacing an existing file can change the live site's appearance without pressing Publish. For an intentional immediate same-name replacement, follow [manual image uploads](manual-image-upload.md). To keep an artwork revision in draft until publication, use `welcome-v2.png`, point the draft to it, review it, then publish. Keep the old file while any draft or published page still references it.
 
 For the operator: production files currently live under `/srv/guten/assets` on the app host, shared read-only by both frontends. They are outside container images and Git. The S3 bucket currently holds database backups, not site images. Follow [media packaging](media-packaging.md) and [host media installation](cloud-app-bootstrap.md#media-installation), with these production qualifications:
 

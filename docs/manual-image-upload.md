@@ -1,14 +1,17 @@
 # Manual image uploads from a Mac to Guten
 
-This is the interim operator procedure while Portal uploads and S3 media storage are deferred. It uses SSH/SCP, keeps images outside Docker images, preserves root ownership and read-only container mounts, and retains the previous media version for rollback.
+This is the interim operator procedure while Portal uploads and S3 media storage are deferred. It uses SSH/SCP, keeps images outside Docker images, preserves root ownership and read-only container mounts, and supports both single-file replacements and separate versioned media updates.
 
 Verified against the host configuration and Next.js source on September 19, 2026. The commands below are a procedure for your next real upload; no production media was changed while writing this guide. They are intended for the existing trusted Guten operator, not a restricted contributor account.
 
 ## What to expect
 
-Upload to a private staging folder as `ubuntu`, then use `sudo` for installation. Do not loosen `/srv/guten` permissions or grant Docker membership to make file copying easier. A complete copy of the active media is staged before switching, preserving all other sites' files. Allow enough disk for that copy and retain previous versions deliberately.
+Upload to a private staging folder as `ubuntu`, then use `sudo` for installation. Do not loosen `/srv/guten` permissions or grant Docker membership to make copying easier.
 
-Next.js discovers public filenames at startup. Both Sites and Portal mount the shared assets directory, so they must be **recreated** after a directory switch. A simple symlink change or file upload is insufficient. This causes a brief frontend interruption across the sites; schedule it accordingly. The database and backend services are not restarted. No build, GitHub push, registry upload, new AWS resource or AWS CLI login is needed.
+- **Replace an existing filename:** use the single-file procedure below. Only that file is replaced and backed up. No restart or Publish is needed; the change affects live content immediately.
+- **Add new filenames / switch a complete media version:** use step 3. This conservative procedure copies the active media and recreates Sites and Portal, causing a brief frontend interruption. Next.js inventories public filenames at startup; that restriction does not apply to replacing the bytes of an already known filename.
+
+Neither procedure builds application images or changes the database. No GitHub push, new AWS resource or AWS CLI login is needed.
 
 ## 1. Connect from the Mac
 
@@ -46,7 +49,74 @@ ssh "${GUTEN_SSH_OPTIONS[@]}" ubuntu@52.54.75.169 \
 
 Confirm the two hashes match and the file is the intended image. Use trusted PNG/JPEG/WebP files; this manual workflow is not an untrusted upload validator. A large image also affects page load time, so resize/compress it before uploading if appropriate. Do not copy an entire Pictures folder.
 
-## 3. Install a new media version
+## Replace one existing image without changing its name
+
+Use this path for small, frequent image swaps. It replaces **only that image**, retaining one backup of the old file outside the public assets tree. It does not copy the media directory, change its symlink, rebuild images, restart containers or require Publish. All draft and published pages using that path see the replacement as their caches refresh. This immediate public change is intentional for this workflow.
+
+Follow steps 1–2 above to stage the replacement and compare its hash. Keep the same filename, image format and extension. Then connect to the app host and run the following, editing `relative`, `staged` and `expected` first. The target must already exist. For an entirely new filename, use the separate new-version procedure below.
+
+```bash
+sudo python3 - <<'PY'
+from pathlib import Path, PurePosixPath
+import datetime, fcntl, hashlib, json, os, shutil, tempfile
+
+relative = 'fieldnotes/welcome.png'
+staged = Path('/home/ubuntu/guten-upload/welcome.png')
+expected = 'REPLACE_WITH_64_CHARACTER_SHA256_FROM_MAC'
+
+assert len(expected) == 64 and all(c in '0123456789abcdef' for c in expected)
+assert relative and not PurePosixPath(relative).is_absolute()
+assert all(p not in ('', '.', '..') for p in relative.split('/'))
+assert '\\' not in relative
+with open('/var/lib/guten/deployments/lock', 'a') as lock:
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    assets = Path('/srv/guten/assets').resolve(strict=True)
+    target = assets / relative
+    assert target.is_file() and not target.is_symlink(), 'Existing regular image required'
+    assert target.resolve().is_relative_to(assets), 'Target escapes assets'
+    assert staged.is_file() and not staged.is_symlink(), 'Regular staged file required'
+    backup_root = Path('/srv/guten/media-overwrite-backups')
+    backup_root.mkdir(mode=0o700, exist_ok=True)
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ-')
+    backup = Path(tempfile.mkdtemp(prefix=stamp, dir=backup_root))
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=target.parent, prefix='.upload-', delete=False) as out:
+            temporary = Path(out.name)
+            with staged.open('rb') as source:
+                shutil.copyfileobj(source, out)
+            out.flush()
+            os.fsync(out.fileno())
+        digest = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+        assert digest(temporary) == expected, 'Uploaded checksum does not match'
+        old_hash = digest(target)
+        shutil.copy2(target, backup / 'original')
+        assert digest(backup / 'original') == old_hash, 'Backup verification failed'
+        (backup / 'receipt.json').write_text(json.dumps({
+            'target': str(target), 'relative': relative,
+            'previous_sha256': old_hash, 'replacement_sha256': expected,
+        }, indent=2) + '\n')
+        os.chown(temporary, 0, 0)
+        temporary.chmod(0o644)
+        os.replace(temporary, target)
+        temporary = None
+        print('Replaced:', target)
+        print('Single-file backup:', backup)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+PY
+```
+
+The rename is atomic: readers receive the old complete file or the new complete file, not a half-copied upload. Root ownership and container read-only mounts remain unchanged. The running frontends already know this filename, so no restart is needed.
+
+Use step 4's download/hash check with the **unchanged path**. If the browser still shows old artwork, hard-refresh or test with a temporary query suffix such as `?check=20260919`. Browser/intermediary caches can delay visibility; a normal client refresh is not proof that the server still holds old bytes. Check the downloaded hash before making another replacement.
+
+To undo, stage the saved `original` as your replacement file and run this same procedure with its `previous_sha256` from `receipt.json`. This backs up the current image before restoring the old one. Do not restore a database or switch the entire media directory to undo a single-file replacement.
+
+Archive the originals/receipts with your media backups. Each successful swap adds only the replaced file's size plus a small receipt. After verifying and independently archiving them, remove specifically selected old backup directories as needed; there is no automatic retention job for these manual backups. Do not delete the active assets tree. Same-name replacements change the active version's bytes, so its original bundle manifest/checksum becomes historical; future inventories must hash the current files rather than assume the initial directory name still describes them.
+
+## 3. Install a new media version (new filenames)
 
 Connect again with the SSH command above. The following block runs **on the app host**. Edit its three configuration values: site folder, image filename and expected SHA256 from the Mac. It refuses to replace an existing filename, so a new artwork revision does not silently change a currently published image.
 
@@ -124,7 +194,7 @@ The downloaded hash should match the source. The shared file can be served throu
 
 Sign into Portal, enter `/assets/fieldnotes/welcome-v2.png` in the page's image field, save and use **View Draft** to verify it. Then Publish when ready and check the published page. Also verify an existing site's page and Portal dashboard after the frontend recreation. Refresh if the browser shows cached content. Never bypass certificate verification to obtain a passing test.
 
-New filenames preserve the editorial boundary: old published pages keep their previous image until you publish the draft reference. Directly overwriting an old filename would bypass that boundary and can also leave browsers showing cached bytes. This cookbook therefore uses `v2`, `v3`, etc.; it deliberately does not offer a live overwrite shortcut.
+New filenames preserve the editorial boundary: old published pages keep their previous image until you publish the draft reference. Directly overwriting an old filename would bypass that boundary and can also leave browsers showing cached bytes. Use `v2`, `v3`, etc. when you want to preserve that editorial boundary. Use the single-file replacement procedure above when an immediate same-name public update is intended.
 
 Archive your source file, installed version/receipt and relevant operational notes outside Git. Database dumps do not contain image bytes. Once verified and archived, the exact staging file in `/home/ubuntu/guten-upload/` can be removed. Do not delete old media versions or files still needed by either draft or published content as part of routine uploading.
 
@@ -163,4 +233,4 @@ Recheck the public site, images and authenticated Portal. Keep the failed media 
 
 ## Scope and future replacement
 
-This is a temporary trusted-operator workflow. A proper Portal/S3 upload feature should replace the manual transport, staging and activation work while preserving stable content references and recovery. Until then, repeat the process for an image update; ask the operator to batch multiple files into one reviewed media version and one frontend recreation when practical.
+This is a temporary trusted-operator workflow. A proper Portal/S3 upload feature should replace the manual transport, staging and activation work while preserving stable content references and recovery. Until then, use single-file replacements for existing names and the versioned procedure for new filenames; ask the operator to batch multiple files into one reviewed media version and one frontend recreation when practical.
