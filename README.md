@@ -113,3 +113,5 @@ Batch 6 adds Physx, Xfin, Xgaia, Xjur and Xmos. Current cumulative routing: `dep
 Batch 7 adds Sysb and Xnome. Current live manifest: `deploy/domains.batch7.json`; the Cloudflare `batch8` manifest is staged, not live. See [final-domain progress](docs/final-nine-cutovers.md).
 
 Batch 8 activates Neuverse, Tiers and Xmed after their Cloudflare DNS changes. Current live manifest: `deploy/domains.batch8.json` (30 publications plus Portal). See [Cloudflare cutover evidence](docs/cloudflare-publication-cutover.md).
+
+The final ready-site release adds Adaprise, Ineural and Xtack (33 publications plus Portal). Active manifest: `deploy/domains.batch9-ready.json`. Convergent is staged pending recursive DNS convergence; see [final-four status](docs/final-four-cutover.md).
