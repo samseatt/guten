@@ -4,6 +4,8 @@ This is the interim operator procedure while Portal uploads and S3 media storage
 
 Verified against the host configuration and Next.js source on September 19, 2026. The commands below are a procedure for your next real upload; no production media was changed while writing this guide. They are intended for the existing trusted Guten operator, not a restricted contributor account.
 
+For delegated folder/batch work, use the [image-update agent brief](handoffs/image-update-agent.md). It specifies in-place additions and replacements without copying the whole media tree. A tested batch helper must be prepared before its first mixed-batch run; the commands here remain manual examples.
+
 ## What to expect
 
 Upload to a private staging folder as `ubuntu`, then use `sudo` for installation. Do not loosen `/srv/guten` permissions or grant Docker membership to make copying easier.

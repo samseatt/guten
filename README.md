@@ -17,6 +17,8 @@ For editors and domain owners, start with [Add a website to Guten](docs/add-a-si
 
 For interim image changes, use [Manual image uploads](docs/manual-image-upload.md): Mac SSH/SCP, protected installation, frontend recreation and media rollback.
 
+For an on-demand AI operator, use the [image-update agent brief](docs/handoffs/image-update-agent.md). It defines folder mapping, hash-based deltas, per-file backups, restart rules and error recovery; no background agent is installed.
+
 ## Everyday use
 
 ```bash
